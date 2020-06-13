@@ -1,0 +1,20 @@
+{
+  "name": "episodelol",
+  "version": "1.0.0",
+  "description": "Pick a random episode of your favorite TV show!",
+  "author": "Dan Flettre",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "nuxt": "^2.0.0",
+    "@nuxtjs/axios": "^5.3.6",
+    "@nuxtjs/dotenv": "^1.4.0",
+    "tachyons": "^4.11.1"
+  },
+  "devDependencies": {}
+}
