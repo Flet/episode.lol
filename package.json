@@ -5,16 +5,55 @@
   "author": "Dan Flettre",
   "private": true,
   "scripts": {
+    "verceldev": "vercel dev",
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
-    "generate": "nuxt generate"
+    "generate": "nuxt generate",
+    "lint": "eslint --ext .js,.vue ."
   },
   "dependencies": {
-    "nuxt": "^2.0.0",
-    "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/dotenv": "^1.4.0",
+    "@vercel/node": "^1.7.0",
+    "axios": "^0.19.2",
+    "jose": "^1.27.1",
+    "nuxt": "^2.0.0",
     "tachyons": "^4.11.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "eslint": "^7.2.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.21.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "eslint-plugin-vue": "^6.2.2",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^8.0.2",
+    "standard": "^14.3.4"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es2020": true,
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/recommended",
+      "standard"
+    ],
+    "ignorePatterns": [
+      ".nuxt",
+      ".vercel",
+      "dist"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 11,
+      "sourceType": "module"
+    },
+    "plugins": [
+      "vue"
+    ],
+    "rules": {}
+  }
 }
