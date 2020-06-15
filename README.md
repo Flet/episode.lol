@@ -1,4 +1,4 @@
-# episodelol
+# episode.lol
 
 > Pick a random episode of your favorite TV show!
 
