@@ -43,7 +43,8 @@ export default {
   */
   modules: [
     // Doc: https://github.com/nuxt-community/dotenv-module
-    '@nuxtjs/dotenv'
+    '@nuxtjs/dotenv',
+    'nuxt-rfg-icon'
   ],
   /*
   ** Build configuration
@@ -53,6 +54,74 @@ export default {
     ** You can extend webpack config here
     */
     extend (config, ctx) {
+    }
+  },
+  // or use global options
+  'rfg-icon': {
+    static: true,
+    staticPath: '/_favicons/',
+    masterPicture: 'static/icon.svg',
+    rfg: {
+      masterPicture: 'static/icon.svg',
+      iconsPath: '/',
+      design: {
+        ios: {
+          pictureAspect: 'backgroundAndMargin',
+          backgroundColor: '#ffffff',
+          margin: '14%',
+          assets: {
+            ios6AndPriorIcons: false,
+            ios7AndLaterIcons: false,
+            precomposedIcons: false,
+            declareOnlyDefaultIcon: true
+          },
+          appName: 'episode.lol'
+        },
+        desktopBrowser: {
+          design: 'raw'
+        },
+        windows: {
+          pictureAspect: 'noChange',
+          backgroundColor: '#da532c',
+          onConflict: 'override',
+          assets: {
+            windows80Ie10Tile: false,
+            windows10Ie11EdgeTiles: {
+              small: false,
+              medium: true,
+              big: false,
+              rectangle: false
+            }
+          },
+          appName: 'episode.lol'
+        },
+        androidChrome: {
+          pictureAspect: 'noChange',
+          themeColor: '#ffffff',
+          manifest: {
+            name: 'episode.lol',
+            display: 'standalone',
+            orientation: 'notSet',
+            onConflict: 'override',
+            declared: true
+          },
+          assets: {
+            legacyIcon: false,
+            lowResolutionIcons: false
+          }
+        },
+        safariPinnedTab: {
+          pictureAspect: 'silhouette',
+          themeColor: '#5bbad5'
+        }
+      },
+      settings: {
+        scalingAlgorithm: 'Mitchell',
+        errorOnImageTooSmall: false,
+        readmeFile: false,
+        htmlCodeFile: false,
+        usePathAsIs: false
+      }
     }
   }
 }

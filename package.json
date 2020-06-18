@@ -18,6 +18,7 @@
     "axios": "^0.19.2",
     "jose": "^1.27.1",
     "nuxt": "^2.0.0",
+    "nuxt-rfg-icon": "^0.6.4",
     "tachyons": "^4.11.1"
   },
   "devDependencies": {

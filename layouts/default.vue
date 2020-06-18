@@ -5,7 +5,11 @@
       <nuxt />
     </div>
     <div class="pt6 pv3 f7 tc gray flex-shrink-0">
-      TV information and images are provided by <a href="https://TheTVDB.com">TheTVDB.com</a>, but we are not endorsed or certified by TheTVDB.com or its affiliates.
+      <p >
+        <a href="https://github.com/flet/episode.lol">github</a>
+        <a href="https://twitter.com/flettre">twitter</a>
+      </p>
+      <p>TV information and images are provided by <a href="https://TheTVDB.com">TheTVDB.com</a>, but we are not endorsed or certified by TheTVDB.com or its affiliates.</p>
     </div>
   </div>
 </template>
