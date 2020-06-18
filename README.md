@@ -1,5 +1,7 @@
 # episode.lol
 
+[https://episode.lol](https://episode.lol)
+
 > Pick a random episode of your favorite TV show!
 
 ## Build Setup
