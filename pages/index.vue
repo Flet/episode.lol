@@ -38,8 +38,8 @@
           v-for="item in results"
           :key="item.id"
         >
-          <a
-            :href="`/series/${item.id}`"
+          <n-link
+            :to="`/series/${item.id}`"
             class="fl w-50 w-25-l link overflow-hidden pa1 shadow"
           >
             <div class=" aspect-ratio aspect-ratio--4x6 overflow-hidden">
@@ -53,7 +53,7 @@
                 :style="`background:url(https://thetvdb.com${item.image}) center;`"
               />
             </div>
-          </a>
+          </n-link>
         </div>
       </article>
     </div>

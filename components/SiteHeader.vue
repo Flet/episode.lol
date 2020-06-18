@@ -1,6 +1,6 @@
 <template>
   <header class="tc pv1 pv3-ns pa0 flex justify-between">
-    <a
+    <n-link to="/"
       href="/"
       class="no-underline"
     >
@@ -11,7 +11,7 @@
           episode.lol
         </h1>
       </div>
-    </a>
+    </n-link>
     <h2 class="f6 white-70 fw2 ttu tracked self-center">
       Pick a random episode of your favorite TV show!
     </h2>
