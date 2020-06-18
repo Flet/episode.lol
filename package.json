@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@nuxtjs/google-analytics": "^2.3.0",
+    "@nuxtjs/now-builder": "^0.17.2",
     "eslint": "^7.2.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.21.2",
