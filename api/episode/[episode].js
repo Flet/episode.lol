@@ -8,6 +8,8 @@ export default async (req, res) => {
   }
 
   const resp = await tvdb.episodeById(episode)
-
+  
+  res.setHeader('Cache-Control', 's-maxage=259200') // 3 days
+  
   return res.status(200).json(resp)
 }

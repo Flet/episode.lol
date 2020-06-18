@@ -9,5 +9,7 @@ export default async (req, res) => {
 
   const resp = await tvdb.searchByName(q)
 
+  res.setHeader('Cache-Control', 's-maxage=259200') // 3 days
+
   return res.status(200).json(resp.data)
 }
