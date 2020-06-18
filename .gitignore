@@ -90,6 +90,3 @@ sw.*
 *.swp
 
 .vercel
-vercel.json
-
-.vercel
