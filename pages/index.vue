@@ -25,8 +25,13 @@
             value="🔎 Find Show"
           >
         </div>
+
+          <div class="f7 gray tc pt1">
+          Turn off adblock if images do not load (there are no ads on this site, I promise!)
+        </div>
       </fieldset>
     </form>
+    
 
      <div
       v-if="searching"
