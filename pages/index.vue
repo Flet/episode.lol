@@ -28,7 +28,11 @@
       </fieldset>
     </form>
 
-    <div v-if="searching">
+     <div
+      v-if="searching"
+      class="w-100 vh-100 content-center items-center flex"
+      style="height:30vh; width; 100vh; justify-content: center"
+    >
       <spinner />
     </div>
 

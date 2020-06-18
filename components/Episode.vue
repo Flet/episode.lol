@@ -6,11 +6,13 @@
   >
     <spinner />
   </div>
-  <div v-else>
-    <div class="ma3">
-      <img
-        :src="`https://thetvdb.com/banners/${epData.filename}`"
-      >
+  <div v-else class="flex justify-center">
+    <div class="ma3 w-80 ba b--mid-gray pa3">
+      <div class="tc">
+        <img
+          :src="epData.filename ? `https://thetvdb.com/banners/${epData.filename}`: ''"
+        >
+      </div>
       <h2>
         {{ epData.episodeName }}
       </h2>
