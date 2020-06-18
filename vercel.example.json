@@ -1,12 +1,5 @@
 {
   "env": {
     "TVDB_API_KEY": "ENTER_TVDB_API_KEY"
-  },
-  "builds": [
-    {
-      "src": "nuxt.config.js",
-      "use": "@nuxtjs/now-builder",
-      "config": {}
-    }
-  ]
+  }
 }
