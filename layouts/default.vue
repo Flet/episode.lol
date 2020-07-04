@@ -36,4 +36,8 @@ html, body {
 .maincontent {
   flex: 1 0 auto;
 }
+
+a, a:visited a:active {
+  color: white;
+}
 </style>
