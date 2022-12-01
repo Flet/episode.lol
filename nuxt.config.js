@@ -44,8 +44,21 @@ export default {
   modules: [
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
-    'nuxt-rfg-icon'
+    'nuxt-rfg-icon',
+    '@chakra-ui/nuxt',
+    '@nuxtjs/emotion'
   ],
+
+  /**
+   * Add extend the plugin options under the `chakra` key.
+   **/
+  chakra: {
+    extendTheme: {
+      colors: {
+        brand: { /* ... */ }
+      }
+    }
+  },
   /*
   ** Build configuration
   */

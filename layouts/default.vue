@@ -1,43 +1,85 @@
 <template>
-  <div class="sans-serif pa3 white-80 mw9 center boom">
-    <div class="maincontent">
-      <site-header />
-      <nuxt />
-    </div>
-    <div class="pt6 pv3 f7 tc gray flex-shrink-0">
-      <p >
-        <a href="https://github.com/flet/episode.lol">github</a>
-        <a href="https://twitter.com/flettre">twitter</a>
-      </p>
-      <p>TV information and images are provided by <a href="https://TheTVDB.com">TheTVDB.com</a>, but we are not endorsed or certified by TheTVDB.com or its affiliates.</p>
-    </div>
+  <div class="container">
+    <CThemeProvider>
+      <CColorModeProvider>
+        <CBox
+          font-family="body"
+          as="main"
+        >
+          <CReset />
+
+          <c-box>
+            <c-flex
+              justify-content="space-between"
+              h="16"
+              align-items="center"
+            >
+              <c-box>Logo</c-box>
+              <c-flex align-items="center">
+                <c-stack
+                  direction="row"
+                  spacing="7"
+                >
+                  <c-button @click="chakraToggleColorMode">
+                    {{
+                    colorMode === 'light' ?   <c-icon
+                      name="moon"
+                      color="green.300"
+                    /> :  <c-icon
+                      name="sun"
+                      color="green.400"
+                    />
+                    }}
+                  </c-button>
+                </c-stack>
+              </c-flex>
+            </c-flex>
+          </c-box>
+
+          <Nuxt />
+        </CBox>
+      </CColorModeProvider>
+    </CThemeProvider>
   </div>
 </template>
-
 <script>
 import SiteHeader from '../components/SiteHeader'
+import {
+  CThemeProvider,
+  CColorModeProvider,
+  CReset,
+  CBox,
+  CFlex,
+  CAvatar,
+  CLink,
+  CButton,
+  CMenu,
+  CMenuButton,
+  CMenuList,
+  CMenuItem,
+  CMenuDivider,
+  CStack
+} from '@chakra-ui/vue'
 
 export default {
-  components: { SiteHeader }
+  components: {
+    SiteHeader,
+    CThemeProvider,
+    CColorModeProvider,
+    CReset,
+    CAvatar,
+    CLink,
+    CButton,
+    CMenu,
+    CMenuButton,
+    CMenuList,
+    CMenuItem,
+    CMenuDivider,
+    CStack,
+    CBox,
+    CFlex
+  }
 }
 </script>
 <style>
-html, body {
-  background: #14181c;
-  color: #fff;
-  height: 100%;
-}
-.boom {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-.maincontent {
-  flex: 1 0 auto;
-}
-
-a, a:visited a:active {
-  color: white;
-}
 </style>

@@ -1,12 +1,14 @@
 <template>
   <header class="tc pv1 pv3-ns pa0 flex justify-between">
-    <n-link to="/"
+    <n-link
+      to="/"
       href="/"
       class="no-underline"
     >
       <div>
-
-        <div class="f2 pa0 grow">📺</div>
+        <div class="f2 pa0 grow">
+          📺
+        </div>
         <h1 class="f5 f4-ns fw6 white-80">
           episode.lol
         </h1>

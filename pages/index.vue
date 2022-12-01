@@ -26,14 +26,13 @@
           >
         </div>
 
-          <div class="f7 gray tc pt1">
+        <div class="f7 gray tc pt1">
           Turn off adblock if images do not load (there are no ads on this site, I promise!)
         </div>
       </fieldset>
     </form>
-    
 
-     <div
+    <div
       v-if="searching"
       class="w-100 vh-100 content-center items-center flex"
       style="height:30vh; width; 100vh; justify-content: center"
