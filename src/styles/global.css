@@ -83,7 +83,7 @@ img { max-width: 100%; display: block; }
   box-shadow: inset 0 0 60px 8px rgba(0,0,0,.55);
 }
 .crt .roll { position: absolute; left: 0; right: 0; height: 38%; z-index: 6; pointer-events: none;
-  background: linear-gradient(180deg, transparent, rgba(255,255,255,.06), transparent); animation: roll 8s linear infinite; }
+  background: linear-gradient(180deg, transparent, rgba(255,255,255,.04), transparent); animation: roll 8s linear infinite; }
 @keyframes roll { 0% { top: -40%; } 100% { top: 120%; } }
 .tv-controls { display: flex; align-items: center; justify-content: space-between; padding: 12px 6px 2px; }
 .brand-plate { font-family: var(--font-chan); font-size: 12px; letter-spacing: .12em; color: #e9cfa3; opacity: .8; }
