@@ -123,7 +123,7 @@ img { max-width: 100%; display: block; }
 .pick-btn:disabled { opacity: .55; cursor: default; box-shadow: 0 8px 0 #7a3a14; }
 
 /* ---------- search / tuner ---------- */
-.tuner { max-width: 640px; margin: 0 auto; }
+.tuner { max-width: 640px; margin: 0 auto; padding-bottom: 64px; }
 .searchbar { display: flex; border-radius: 10px; overflow: hidden; border: 2px solid var(--amber); box-shadow: 0 0 16px rgba(255,150,60,.35); }
 .searchbar input { flex: 1; min-width: 0; background: #06100b; border: none; color: var(--phos);
   font-family: var(--font-osd); font-size: 25px; padding: 11px 14px; outline: none; }
