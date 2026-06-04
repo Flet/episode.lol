@@ -459,8 +459,8 @@ a.cast-card:hover .actor { color: var(--cyan); }
 @media (max-width: 600px) {
   .shell { padding: 10px 8px 64px; }
   .tv-frame { padding: 9px; border-radius: 64px;  }
-  .tv-frame > .bezel { padding: 7px; border-radius: 64px; }
-  .crt > .crt-body { padding: 14px; }
+  .tv-frame > .bezel { padding: 7px; border-radius: 60px; }
+  .crt > .crt-body { padding: 14px; padding-top:24px;}
   .credit-grid { grid-template-columns: 1fr; }
   .searchbar input { font-size: 22px; }
   .hero-title { left: 12px; right: 12px; }
