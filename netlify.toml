@@ -1,0 +1,11 @@
+[build]
+  command = "pnpm build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# The Astro Netlify adapter turns src/pages/api/*.ts into serverless functions.
+# Set TVDB_API_KEY (and TVDB_PIN if your plan needs it) in:
+#   Site settings -> Environment variables.
+# Do NOT commit real keys  .env is gitignored.

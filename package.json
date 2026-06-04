@@ -1,62 +1,27 @@
 {
-  "name": "episode.lol",
-  "version": "1.0.0",
+  "name": "episode-lol",
+  "version": "2026.1.0",
   "description": "Pick a random episode of your favorite TV show!",
+  "type": "module",
   "author": "Dan Flettre",
-  "private": true,
+  "license": "MIT",
   "scripts": {
-    "verceldev": "vercel dev",
-    "dev": "nuxt",
-    "build": "nuxt build",
-    "start": "nuxt start",
-    "generate": "nuxt generate",
-    "lint": "eslint --ext .js,.vue ."
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "astro": "astro"
   },
   "dependencies": {
-    "@nuxtjs/dotenv": "^1.4.0",
-    "@vercel/node": "^1.7.0",
-    "axios": "^0.21.1",
-    "jose": "^1.27.1",
-    "nuxt": "^2.0.0",
-    "nuxt-rfg-icon": "^0.6.4",
-    "tachyons": "^4.11.1"
+    "@astrojs/netlify": "^6.0.0",
+    "@astrojs/react": "^4.2.0",
+    "astro": "^5.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@nuxtjs/google-analytics": "^2.3.0",
-    "@nuxtjs/now-builder": "^0.17.2",
-    "eslint": "^7.2.0",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.21.2",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1",
-    "eslint-plugin-vue": "^6.2.2",
-    "node-sass": "^7.0.0",
-    "sass-loader": "^8.0.2",
-    "standard": "^14.3.4"
-  },
-  "eslintConfig": {
-    "env": {
-      "browser": true,
-      "es2020": true,
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/recommended",
-      "standard"
-    ],
-    "ignorePatterns": [
-      ".nuxt",
-      ".vercel",
-      "dist"
-    ],
-    "parserOptions": {
-      "ecmaVersion": 11,
-      "sourceType": "module"
-    },
-    "plugins": [
-      "vue"
-    ],
-    "rules": {}
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "typescript": "^5.7.0"
   }
 }

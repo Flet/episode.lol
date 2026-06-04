@@ -1,0 +1,81 @@
+---
+import '@/styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = 'episode.lol: pick a random episode of your favorite TV show',
+  description = 'pick a random episode of your favorite TV show'
+} = Astro.props;
+
+const GA4 = import.meta.env.PUBLIC_GA4_ID;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#241a12" />
+    <title>{title}</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Monoton&family=Bungee&family=VT323&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap"
+      rel="stylesheet"
+    />
+    {GA4 && (
+      <Fragment>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA4}`}></script>
+        <script is:inline define:vars={{ GA4 }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          gtag('js', new Date());
+          gtag('config', GA4);
+        </script>
+      </Fragment>
+    )}
+  </head>
+  <body>
+    <div class="shell">
+      <header class="site-header">
+        <a class="logo" href="/">📺</a>
+        <a class="logo" href="/">episode.lol</a>
+      </header>
+
+      <div class="tv-frame">
+        <div class="bezel">
+          <div class="crt">
+            <span class="roll"></span>
+            <div class="crt-body">
+              <slot />
+            </div>
+          </div>
+        </div>
+        <div class="tv-controls">
+          <span class="brand-plate"></span>
+          <span class="knobs"><span class="knob"></span><span class="knob"></span></span>
+        </div>
+      </div>
+
+      <footer class="site-footer">
+        <p>
+          <a href="https://github.com/flet/episode.lol">github</a> ·
+          <a href="https://bsky.app/profile/flet.net">bsky</a>
+        </p>
+        <p style="font-size:14px;opacity:.75">
+          TV information and images are provided by
+          <a href="https://thetvdb.com">TheTVDB.com</a>, but we are not endorsed or certified by
+          TheTVDB.com or its affiliates. · please be kind, rewind
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

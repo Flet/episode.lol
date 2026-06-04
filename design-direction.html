@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>episode.lol 2026 Design Direction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Monoton&family=Bungee&family=VT323&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* ----- 70s/80s warm living-room palette ----- */
+  --wood:#4a3120;        /* walnut paneling */
+  --wood-2:#6b452a;      /* lighter wood */
+  --gold:#e6a92e;        /* harvest gold */
+  --orange:#d2602a;      /* burnt orange */
+  --rust:#b8431f;
+  --avocado:#7f8b39;     /* avocado green */
+  --teal:#1f9e8f;
+  --cream:#f4e7c9;       /* bone / cream */
+  --ink:#241a12;
+
+  /* ----- CRT phosphor + VHS chroma ----- */
+  --crt:#0b1410;         /* dark phosphor screen */
+  --crt-2:#0f1d16;
+  --amber:#ffb347;       /* warm phosphor glow */
+  --phos:#8bf6c8;        /* green phosphor */
+  --magenta:#ff3d7f;     /* VHS chroma */
+  --cyan:#36e0d0;        /* VHS chroma */
+
+  --font-logo:'Monoton', cursive;
+  --font-chan:'Bungee', sans-serif;
+  --font-osd:'VT323', monospace;
+  --font-body:'DM Sans', system-ui, sans-serif;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:var(--font-body);
+  color:var(--cream);
+  background:
+    radial-gradient(120% 90% at 50% -10%, #6b452a 0%, #3a2616 45%, #20140c 100%);
+  background-attachment:fixed;
+  overflow-x:hidden;
+}
+/* faux wood-grain paneling behind everything */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.18;
+  background-image:repeating-linear-gradient(90deg,
+    rgba(0,0,0,.35) 0 2px, rgba(0,0,0,0) 2px 7px,
+    rgba(255,255,255,.04) 7px 8px, rgba(0,0,0,0) 8px 26px);
+  mix-blend-mode:multiply;
+}
+.wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 22px 120px}
+
+/* ---------- shared CRT screen treatment ---------- */
+.crt{position:relative;background:radial-gradient(120% 120% at 50% 40%, var(--crt-2) 0%, var(--crt) 75%);
+  border-radius:18px/26px;overflow:hidden;isolation:isolate}
+.crt::after{ /* scanlines + flicker */
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:6;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,.0) 0 2px, rgba(0,0,0,.28) 2px 4px);
+  mix-blend-mode:multiply;animation:flick 5.5s steps(60) infinite}
+.crt::before{ /* curvature vignette + corner glow */
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:5;
+  background:radial-gradient(110% 120% at 50% 50%, transparent 55%, rgba(0,0,0,.55) 100%);
+  box-shadow:inset 0 0 60px 8px rgba(0,0,0,.6)}
+@keyframes flick{0%,97%{opacity:.55}98%{opacity:.4}99%{opacity:.7}100%{opacity:.5}}
+
+/* rolling-bar sheen that drifts down the tube */
+.roll{position:absolute;left:0;right:0;height:38%;z-index:6;pointer-events:none;
+  background:linear-gradient(180deg, transparent, rgba(255,255,255,.06), transparent);
+  animation:roll 7s linear infinite}
+@keyframes roll{0%{top:-40%}100%{top:120%}}
+
+/* ---------- HERO: the TV set ---------- */
+.hero{padding:64px 0 30px;text-align:center}
+.kicker{font-family:var(--font-osd);font-size:22px;letter-spacing:.18em;color:var(--amber);
+  text-transform:uppercase;opacity:.9}
+.tvset{position:relative;margin:18px auto 0;max-width:760px;
+  background:linear-gradient(180deg,#7a4f2e,#4a3120);
+  border-radius:26px;padding:30px 30px 22px;
+  box-shadow:0 30px 60px rgba(0,0,0,.55), inset 0 2px 0 rgba(255,255,255,.15), inset 0 -8px 22px rgba(0,0,0,.5)}
+.tvset .bezel{background:#2a1b10;border-radius:20px;padding:16px;box-shadow:inset 0 0 0 3px #19100a, inset 0 0 30px rgba(0,0,0,.8)}
+.screen{aspect-ratio:4/3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.logo{font-family:var(--font-logo);font-size:clamp(38px,8vw,86px);line-height:.9;
+  color:#ffd98a;
+  text-shadow:0 0 6px var(--amber),0 0 18px rgba(255,150,60,.8),0 0 42px rgba(255,90,40,.6);
+  animation:hum 3.2s ease-in-out infinite}
+@keyframes hum{50%{text-shadow:0 0 7px var(--amber),0 0 24px rgba(255,150,60,.9),0 0 58px rgba(255,90,40,.7)}}
+.tagline{font-family:var(--font-osd);font-size:26px;color:var(--phos);letter-spacing:.06em;
+  text-shadow:0 0 8px rgba(120,255,190,.6)}
+.osd-tr{position:absolute;top:24px;right:30px;z-index:7;font-family:var(--font-osd);
+  font-size:20px;color:var(--cream);letter-spacing:.1em;text-shadow:0 0 6px rgba(0,0,0,.8)}
+.osd-tr .rec{color:#ff4d4d}
+.controls{display:flex;align-items:center;justify-content:space-between;margin-top:18px;padding:0 6px}
+.brand-plate{font-family:var(--font-chan);font-size:13px;letter-spacing:.12em;color:#e9cfa3;opacity:.8}
+.knobs{display:flex;gap:14px}
+.knob{width:34px;height:34px;border-radius:50%;cursor:pointer;
+  background:radial-gradient(circle at 35% 30%, #d9b072, #5a3a1f 70%);
+  box-shadow:0 3px 6px rgba(0,0,0,.5), inset 0 0 0 2px rgba(0,0,0,.3);
+  position:relative;transition:transform .15s}
+.knob::after{content:"";position:absolute;top:5px;left:50%;width:3px;height:11px;background:#241a12;transform:translateX(-50%)}
+.knob:hover{transform:rotate(28deg)}
+.btn{font-family:var(--font-chan);font-size:14px;border:none;cursor:pointer;color:var(--ink);
+  background:linear-gradient(180deg,var(--gold),var(--orange));padding:13px 22px;border-radius:10px;
+  box-shadow:0 5px 0 #7a3a14, 0 8px 14px rgba(0,0,0,.4);letter-spacing:.04em;transition:transform .08s, box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #7a3a14,0 3px 8px rgba(0,0,0,.4)}
+.btn.alt{background:linear-gradient(180deg,var(--teal),#13675d);color:#eafff9;box-shadow:0 5px 0 #0a463e,0 8px 14px rgba(0,0,0,.4)}
+
+/* ---------- section scaffolding ---------- */
+section{margin-top:72px}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-osd);
+  font-size:20px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);
+  background:var(--gold);padding:4px 14px;border-radius:6px}
+.eyebrow .num{font-family:var(--font-chan);font-size:13px;background:var(--ink);color:var(--gold);
+  padding:2px 8px;border-radius:4px}
+h2.title{font-family:var(--font-chan);font-size:clamp(26px,4vw,40px);margin:14px 0 4px;color:var(--cream);
+  text-shadow:2px 2px 0 var(--rust),4px 4px 0 rgba(0,0,0,.3)}
+.lead{max-width:60ch;color:#f0dcb6;opacity:.92;font-size:17px;line-height:1.5}
+
+/* ---------- palette ---------- */
+.swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:14px;margin-top:24px}
+.sw{border-radius:12px;padding:14px;height:120px;display:flex;flex-direction:column;justify-content:flex-end;
+  font-family:var(--font-osd);font-size:18px;box-shadow:0 8px 16px rgba(0,0,0,.35);position:relative;overflow:hidden}
+.sw small{display:block;opacity:.8;font-family:var(--font-body);font-size:12px;letter-spacing:.04em}
+.bars{height:14px;border-radius:6px;margin-top:24px;overflow:hidden;display:flex}
+.bars i{flex:1}
+
+/* ---------- type specimens ---------- */
+.type-grid{display:grid;gap:16px;margin-top:24px}
+.spec{background:var(--crt);border-radius:14px;padding:22px 24px;border:1px solid rgba(255,255,255,.06);
+  box-shadow:inset 0 0 40px rgba(0,0,0,.5)}
+.spec .lab{font-family:var(--font-osd);font-size:16px;color:var(--amber);letter-spacing:.12em;text-transform:uppercase}
+.spec .logo{font-size:54px;animation:none}
+.spec .big-chan{font-family:var(--font-chan);font-size:40px;color:var(--cyan);text-shadow:2px 2px 0 var(--magenta)}
+.spec .osd{font-family:var(--font-osd);font-size:30px;color:var(--phos)}
+.spec .body{font-size:17px;color:var(--cream);line-height:1.5;max-width:62ch}
+
+/* ---------- TV channel mock screens ---------- */
+.channels{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:26px}
+@media(max-width:760px){.channels{grid-template-columns:1fr}}
+.tv-card{background:linear-gradient(180deg,#6b452a,#3a2616);border-radius:20px;padding:16px;
+  box-shadow:0 18px 36px rgba(0,0,0,.45), inset 0 2px 0 rgba(255,255,255,.12)}
+.tv-card .bezel{background:#221509;border-radius:14px;padding:10px;box-shadow:inset 0 0 0 3px #160d06}
+.tv-screen{aspect-ratio:4/3;position:relative;padding:16px;color:var(--cream);overflow:hidden;border-radius:8px}
+.chan-tag{position:absolute;top:10px;left:12px;z-index:7;font-family:var(--font-osd);font-size:20px;color:var(--cream);
+  letter-spacing:.1em;text-shadow:0 0 6px rgba(0,0,0,.9)}
+.chan-tag b{color:var(--amber)}
+.tv-cap{font-family:var(--font-chan);font-size:14px;letter-spacing:.04em;color:#e9cfa3;text-align:center;padding:12px 4px 4px}
+.tv-cap small{display:block;font-family:var(--font-body);font-weight:400;font-size:13px;opacity:.7;margin-top:4px}
+
+/* screen 1: tuner/home */
+.tuner{display:flex;flex-direction:column;height:100%;justify-content:center;gap:14px}
+.tuner .logo{font-size:34px;text-align:center}
+.searchbar{display:flex;border-radius:8px;overflow:hidden;border:2px solid var(--amber);box-shadow:0 0 14px rgba(255,150,60,.4)}
+.searchbar input{flex:1;background:#06100b;border:none;color:var(--phos);font-family:var(--font-osd);font-size:20px;padding:8px 12px;outline:none}
+.searchbar .go{background:var(--orange);color:var(--ink);font-family:var(--font-chan);font-size:12px;border:none;padding:0 14px;cursor:pointer}
+.dial{display:flex;justify-content:center;gap:8px;font-family:var(--font-osd);font-size:16px;color:var(--amber);opacity:.85}
+
+/* tv-guide poster grid */
+.guide{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;height:100%;align-content:center}
+.poster{aspect-ratio:2/3;border-radius:6px;position:relative;overflow:hidden;
+  box-shadow:0 4px 8px rgba(0,0,0,.5);display:flex;align-items:flex-end;
+  font-family:var(--font-chan);font-size:10px;color:#fff;padding:6px;text-shadow:0 1px 2px #000}
+.poster span{position:relative;z-index:2;line-height:1.05}
+.poster::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.75))}
+
+/* screen 3: the big knob */
+.bigpick{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px}
+.bigpick .show-name{font-family:var(--font-chan);font-size:18px;color:var(--cyan);text-shadow:1px 1px 0 var(--magenta)}
+.dialknob{width:108px;height:108px;border-radius:50%;cursor:pointer;position:relative;
+  background:radial-gradient(circle at 36% 30%, #ffd98a, #c8521b 60%, #6b2a0e);
+  box-shadow:0 8px 0 #5a2208,0 14px 24px rgba(0,0,0,.5), inset 0 0 0 6px rgba(0,0,0,.2);
+  display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.dialknob:hover{transform:rotate(20deg)}
+.dialknob span{font-family:var(--font-osd);font-size:18px;color:#2a1206;transform:rotate(0);text-align:center;line-height:.95}
+.dialknob::after{content:"";position:absolute;top:8px;left:50%;width:5px;height:20px;background:#2a1206;transform:translateX(-50%);border-radius:3px}
+.pickhint{font-family:var(--font-osd);font-size:18px;color:var(--amber);letter-spacing:.08em}
+
+/* screen 4: reveal w/ static */
+.reveal{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;text-align:center;padding:18px}
+.static-ov{position:absolute;inset:0;z-index:8;opacity:0;pointer-events:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/></svg>");
+  background-size:160px}
+.reveal .ep-title{font-family:var(--font-chan);font-size:18px;color:var(--cream)}
+.reveal .ep-meta{font-family:var(--font-osd);font-size:20px;color:var(--amber)}
+.reveal .ep-show{font-family:var(--font-osd);font-size:16px;color:var(--phos);letter-spacing:.1em;text-transform:uppercase}
+
+/* screen 5: VHS tape label */
+.vhs{height:100%;display:flex;align-items:center;justify-content:center;padding:6px}
+.tape{width:100%;background:#1b120a;border-radius:8px;border:2px solid #000;
+  box-shadow:0 8px 18px rgba(0,0,0,.6);overflow:hidden;font-family:var(--font-body)}
+.tape .label{background:repeating-linear-gradient(180deg,#f4e7c9 0 22px,#e7d3a6 22px 24px);color:#241a12;padding:10px 12px}
+.tape .label .hdr{display:flex;justify-content:space-between;font-family:var(--font-chan);font-size:11px;border-bottom:2px solid #b8431f;padding-bottom:4px;margin-bottom:6px}
+.tape .ep{font-family:var(--font-osd);font-size:22px;line-height:1;color:#241a12}
+.tape .sub{font-size:12px;opacity:.8;margin-top:3px}
+.tape .strip{display:flex;justify-content:space-between;align-items:center;background:#241a12;color:var(--amber);
+  font-family:var(--font-osd);font-size:15px;padding:6px 12px}
+
+/* ---------- RICH episode detail ---------- */
+.detail{color:var(--cream);font-family:var(--font-body)}
+.detail-hero{position:relative;border-radius:10px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.5)}
+.still{aspect-ratio:16/9;position:relative;
+  background:linear-gradient(135deg,#d2602a 0%,#b8431f 45%,#3a2616 100%)}
+.still::before{content:"EPISODE STILL";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-osd);font-size:22px;color:rgba(255,255,255,.25);letter-spacing:.2em}
+.still::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0 3px,rgba(0,0,0,.18) 3px 4px)}
+.hero-grad{position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,transparent 35%,rgba(11,20,16,.55) 70%,rgba(11,20,16,.96))}
+.hero-osd{position:absolute;top:12px;left:14px;z-index:3;font-family:var(--font-osd);font-size:18px;color:var(--cream);text-shadow:0 0 6px #000}
+.hero-osd .pulse{color:#ff4d4d}
+.rating-badge{position:absolute;top:12px;right:14px;z-index:3;display:flex;flex-direction:column;align-items:center;
+  background:rgba(11,20,16,.7);border:2px solid var(--gold);border-radius:10px;padding:6px 12px;
+  font-family:var(--font-osd);color:var(--gold);box-shadow:0 0 12px rgba(255,150,60,.4)}
+.rating-badge b{font-size:26px;line-height:1}.rating-badge small{font-size:12px;opacity:.8;letter-spacing:.1em}
+.hero-title{position:absolute;left:18px;right:18px;bottom:14px;z-index:3}
+.hero-title .se{display:inline-block;font-family:var(--font-osd);font-size:16px;background:var(--rust);color:var(--cream);
+  padding:1px 9px;border-radius:5px;letter-spacing:.08em;margin-bottom:6px}
+.hero-title h3{font-family:var(--font-chan);font-size:clamp(20px,3.6vw,30px);margin:0;color:#fff;text-shadow:2px 2px 0 var(--rust)}
+.hero-title .show{font-family:var(--font-osd);font-size:17px;color:var(--phos);letter-spacing:.12em;text-transform:uppercase}
+
+.detail-body{display:grid;grid-template-columns:1fr 270px;gap:18px;margin-top:16px}
+@media(max-width:680px){.detail-body{grid-template-columns:1fr}}
+.section-block{margin-bottom:16px}
+.section-block .lab{font-family:var(--font-osd);font-size:16px;color:var(--amber);letter-spacing:.14em;text-transform:uppercase;
+  border-bottom:1px dashed rgba(255,179,71,.35);padding-bottom:3px;margin-bottom:8px}
+.section-block p{margin:0;font-size:15px;line-height:1.55;color:#f0dcb6}
+.credit-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.credit-grid .who{font-size:15px;color:var(--cream)}
+.credit-grid .who b{display:block;font-family:var(--font-osd);font-size:14px;color:var(--amber);letter-spacing:.08em;text-transform:uppercase;font-weight:400;margin-bottom:2px}
+.linkish{color:var(--cyan);text-decoration:none;border-bottom:1px dotted var(--cyan)}
+
+/* OSD info panel  looks like an on-screen TV menu */
+.info-panel{background:#06100b;border:2px solid var(--avocado);border-radius:10px;padding:14px 16px;
+  box-shadow:inset 0 0 28px rgba(0,0,0,.6),0 0 14px rgba(127,139,57,.25);font-family:var(--font-osd);align-self:start}
+.info-panel .ipt{font-size:17px;color:var(--phos);letter-spacing:.14em;text-transform:uppercase;
+  border-bottom:1px solid rgba(139,246,200,.3);padding-bottom:6px;margin-bottom:8px}
+.irow{display:flex;justify-content:space-between;align-items:baseline;font-size:18px;color:var(--cream);padding:3px 0;gap:8px}
+.irow .k{color:var(--gold);white-space:nowrap}
+.irow .v{text-align:right;color:#eafff2}
+.genre-tags{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+.genre-tags span{font-family:var(--font-osd);font-size:14px;background:var(--teal);color:#06231f;padding:1px 8px;border-radius:4px}
+.progress{margin-top:10px}
+.progress .bar{height:8px;border-radius:4px;background:#13241c;overflow:hidden;border:1px solid rgba(139,246,200,.3)}
+.progress .bar i{display:block;height:100%;width:35%;background:linear-gradient(90deg,var(--gold),var(--orange))}
+.progress small{font-family:var(--font-osd);font-size:14px;color:var(--phos);letter-spacing:.08em}
+
+/* cast strip */
+.cast-wrap{margin-top:6px}
+.cast-row{display:flex;gap:14px;overflow-x:auto;padding:6px 2px 12px}
+.cast-card{flex:0 0 92px;text-align:center}
+.avatar{width:72px;height:72px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-chan);font-size:20px;color:#fff;border:2px solid var(--gold);box-shadow:0 4px 10px rgba(0,0,0,.5)}
+.cast-card .actor{font-size:12px;font-weight:700;color:var(--cream);line-height:1.1}
+.cast-card .role{font-family:var(--font-osd);font-size:13px;color:var(--phos);line-height:1.05}
+.action-strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;background:#241a12;border-radius:10px;padding:10px 12px;
+  font-family:var(--font-osd);font-size:16px}
+.action-strip button{font-family:var(--font-osd);font-size:16px;background:transparent;border:1px solid var(--amber);color:var(--amber);
+  padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:.06em;transition:background .12s,color .12s}
+.action-strip button:hover{background:var(--amber);color:var(--ink)}
+.action-strip button.prime{background:var(--orange);border-color:var(--orange);color:var(--ink)}
+
+/* ---------- 3D VHS sleeve (poster=face, banner=spine) ---------- */
+.rail{display:flex;flex-direction:column;gap:16px}
+.tape-shelf{background:#06100b;border:2px solid var(--rust);border-radius:10px;padding:12px 10px 8px;text-align:center;
+  box-shadow:inset 0 0 28px rgba(0,0,0,.6)}
+.tape-shelf .ipt{font-family:var(--font-osd);font-size:16px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;
+  border-bottom:1px solid rgba(255,179,71,.3);padding-bottom:6px;margin-bottom:4px}
+.tape-shelf .cap{font-family:var(--font-osd);font-size:14px;color:var(--phos);letter-spacing:.04em;margin-top:2px;line-height:1.3}
+.shelf-stage{perspective:820px;display:flex;justify-content:center;align-items:center;height:300px;position:relative}
+.shelf-stage::after{content:"";position:absolute;bottom:30px;width:150px;height:24px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(0,0,0,.6),transparent 70%);filter:blur(3px)}
+.vhs-float{animation:tfloat 6.5s ease-in-out infinite}
+@keyframes tfloat{50%{transform:translateY(-8px)}}
+.vhs-case{position:relative;width:158px;height:250px;transform-style:preserve-3d;
+  transform:rotateX(7deg) rotateY(32deg);transition:transform .6s cubic-bezier(.2,.7,.2,1);cursor:pointer}
+.vhs-case:hover{transform:rotateX(4deg) rotateY(12deg)}
+.vhs-case.spinning{animation:tape-spin 1s cubic-bezier(.2,.8,.2,1)}
+@keyframes tape-spin{from{transform:rotateX(7deg) rotateY(392deg)}to{transform:rotateX(7deg) rotateY(32deg)}}
+.vface{position:absolute;top:50%;left:50%;overflow:hidden}
+/* FRONT = TVDB poster */
+.vfront{width:158px;height:250px;transform:translate(-50%,-50%) translateZ(20px);border-radius:5px 5px 3px 3px;
+  background:linear-gradient(158deg,#e6912a 0%,#c8521b 48%,#3a2616 100%);
+  box-shadow:inset 0 0 0 2px rgba(0,0,0,.45),inset 0 0 34px rgba(0,0,0,.45);
+  display:flex;flex-direction:column;color:#fff}
+.vfront .p-band{font-family:var(--font-osd);font-size:12px;letter-spacing:.14em;text-align:center;color:#241a12;
+  background:var(--gold);padding:3px 0}
+.vfront .p-art{flex:1;display:flex;align-items:center;justify-content:center;font-family:var(--font-chan);
+  font-size:26px;line-height:.95;text-align:center;text-shadow:2px 2px 0 rgba(0,0,0,.5);padding:8px}
+.vfront .p-foot{font-family:var(--font-osd);font-size:12px;letter-spacing:.1em;text-align:center;color:#f4e7c9;
+  background:rgba(0,0,0,.45);padding:4px 0}
+.vfront .sheen{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(118deg,transparent 32%,rgba(255,255,255,.22) 46%,transparent 56%)}
+/* SPINE = TVDB banner (rotated to read down the edge) */
+.vspine{width:40px;height:250px;backface-visibility:hidden;border-radius:3px 0 0 3px;
+  background:linear-gradient(180deg,#1f9e8f,#13675d 50%,#241a12);
+  box-shadow:inset -7px 0 14px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center}
+.vspine.left{transform:translate(-50%,-50%) rotateY(-90deg) translateZ(79px)}
+.vspine.right{transform:translate(-50%,-50%) rotateY(90deg) translateZ(79px)}
+.vspine span{writing-mode:vertical-rl;font-family:var(--font-chan);font-size:13px;letter-spacing:.06em;
+  color:#fff;text-shadow:0 1px 2px #000;white-space:nowrap}
+/* TOP = open sleeve end, tape edge peeking */
+.vtop{width:158px;height:40px;transform:translate(-50%,-50%) rotateX(90deg) translateZ(125px);
+  background:linear-gradient(180deg,#15100a,#2a1c10);box-shadow:inset 0 0 16px rgba(0,0,0,.7)}
+.vtop::after{content:"";position:absolute;left:10px;right:10px;top:50%;height:11px;transform:translateY(-50%);
+  background:repeating-linear-gradient(90deg,#000 0 3px,#3a3a3a 3px 7px);border-radius:2px}
+/* the black cassette (its own 3D box) that slides out the BOTTOM of the sleeve */
+.cassette{position:absolute;top:50%;left:50%;width:138px;height:250px;transform-style:preserve-3d;
+  transform:translate(-50%,-50%) translateY(16px);transition:transform .65s cubic-bezier(.2,.75,.2,1)}
+.cass-face{position:absolute;top:50%;left:50%;overflow:hidden}
+.cass-front{width:138px;height:250px;transform:translate(-50%,-50%) translateZ(13px);
+  background:linear-gradient(180deg,#2a1f15,#0e0a06);border-radius:6px;
+  box-shadow:inset 0 0 0 2px #000,inset 0 0 22px rgba(0,0,0,.5)}
+.cass-spine{width:26px;height:250px;backface-visibility:hidden;
+  background:repeating-linear-gradient(180deg,#1c150e 0 6px,#110c07 6px 8px);box-shadow:inset 0 0 10px rgba(0,0,0,.7)}
+.cass-spine.r{transform:translate(-50%,-50%) rotateY(90deg) translateZ(69px)}
+.cass-spine.l{transform:translate(-50%,-50%) rotateY(-90deg) translateZ(69px)}
+.cass-bottom{width:138px;height:26px;transform:translate(-50%,-50%) rotateX(-90deg) translateZ(125px);
+  background:linear-gradient(180deg,#15100a,#070504)}
+.cass-label{position:absolute;top:10px;left:9px;right:9px;height:30px;border-radius:2px;
+  background:repeating-linear-gradient(180deg,#ecd9aa 0 14px,#dcc790 14px 15px);
+  font-family:var(--font-osd);font-size:13px;color:#241a12;display:flex;align-items:center;justify-content:center;letter-spacing:.1em}
+.cass-win{position:absolute;top:48px;left:16px;right:16px;height:40px;border-radius:6px;background:#0a0805;
+  box-shadow:inset 0 0 10px #000;display:flex;align-items:center;justify-content:space-around}
+.cass-win i{width:27px;height:27px;border-radius:50%;background:radial-gradient(circle,#4a3a24 0 38%,#15100a 40%);box-shadow:0 0 0 2px #2a2018}
+.cass-flap{position:absolute;left:7px;right:7px;bottom:9px;height:56px;border-radius:4px;
+  background:linear-gradient(180deg,#1a130d,#000);box-shadow:inset 0 2px 5px rgba(0,0,0,.6),inset 0 0 0 1px #000}
+.cass-flap::after{content:"";position:absolute;left:14px;right:14px;top:12px;height:5px;background:#2a2018;border-radius:2px}
+.vhs-case:hover .cassette{transform:translate(-50%,-50%) translateY(62px)}
+.vhs-case.ejected .cassette{transform:translate(-50%,-50%) translateY(80px)}
+/* tape placements */
+.detail-hero{perspective:1000px}
+.tape-hero{position:absolute;left:16px;bottom:122px;z-index:3;transform:scale(.87);transform-origin:bottom left;
+  filter:drop-shadow(0 16px 14px rgba(0,0,0,.6))}
+.reveal{perspective:780px}
+.tape-reveal{transform:scale(.75);transform-origin:center;margin:-18px auto -8px;
+  filter:drop-shadow(0 14px 12px rgba(0,0,0,.55))}
+
+/* ---------- feature cards ---------- */
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;margin-top:24px}
+.feat{background:var(--crt);border-radius:16px;padding:20px;border:1px solid rgba(255,255,255,.07);
+  box-shadow:inset 0 0 40px rgba(0,0,0,.5),0 10px 22px rgba(0,0,0,.3)}
+.feat .ic{font-size:30px}
+.feat h3{font-family:var(--font-chan);font-size:16px;margin:10px 0 6px;color:var(--cyan)}
+.feat p{font-size:14px;line-height:1.45;color:#e7d6b0;opacity:.9;margin:0}
+.tag{display:inline-block;font-family:var(--font-osd);font-size:13px;background:var(--rust);color:var(--cream);
+  padding:1px 8px;border-radius:4px;letter-spacing:.06em;margin-top:10px}
+
+/* ---------- UI kit ---------- */
+.kit{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:24px;
+  background:var(--crt);border-radius:16px;padding:24px;box-shadow:inset 0 0 40px rgba(0,0,0,.5)}
+.badge{font-family:var(--font-osd);font-size:16px;padding:4px 10px;border-radius:6px;letter-spacing:.08em}
+.tracking{font-family:var(--font-osd);font-size:18px;color:#fff;background:#000;padding:4px 12px;letter-spacing:.2em;border-radius:4px}
+
+/* live demo bar */
+.demobar{position:fixed;bottom:0;left:0;right:0;z-index:30;background:rgba(20,12,6,.92);
+  backdrop-filter:blur(6px);border-top:2px solid var(--gold);display:flex;gap:12px;
+  align-items:center;justify-content:center;padding:10px;font-family:var(--font-osd);font-size:18px;color:var(--amber)}
+.demobar .btn{padding:9px 16px;font-size:12px}
+
+footer{margin-top:80px;text-align:center;font-family:var(--font-osd);font-size:18px;color:var(--amber);opacity:.8}
+
+/* SMPTE bars helper */
+.smpte{display:flex;height:100%;width:100%;position:absolute;inset:0;z-index:1;opacity:.0;transition:opacity .2s}
+.smpte i{flex:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===================== HERO ===================== -->
+  <div class="hero">
+    <div class="kicker">◖ Now Tuning In · Design Direction 2026 ◗</div>
+    <div class="tvset">
+      <div class="osd-tr"><span class="rec">●</span> REC&nbsp;&nbsp;CH 02 &nbsp; <span id="clock">12:00</span></div>
+      <div class="bezel">
+        <div class="crt">
+          <div class="roll"></div>
+          <div class="smpte" id="heroBars">
+            <i style="background:#c0c0c0"></i><i style="background:#c0c000"></i><i style="background:#00c0c0"></i>
+            <i style="background:#00c000"></i><i style="background:#c000c0"></i><i style="background:#c00000"></i><i style="background:#0000c0"></i>
+          </div>
+          <div class="screen" id="heroScreen">
+            <div class="logo">episode<br>.lol</div>
+            <div class="tagline">▶ pick a random episode</div>
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="knobs">
+          <div class="knob" title="Power" onclick="powerCycle()"></div>
+          <div class="knob" title="Channel" onclick="surf()"></div>
+        </div>
+      </div>
+    </div>
+    <p class="lead" style="margin:26px auto 0;text-align:center">
+      A sunny afternoon, a comfy couch, and the whole dial to flip through. The 2026 build wraps your
+      "what should I watch?" ritual in a glowing CRT  full retro immersion, but the channels underneath are fast, modern Astro.
+    </p>
+  </div>
+
+  <!-- ===================== 01 PALETTE ===================== -->
+  <section id="palette">
+    <span class="eyebrow"><span class="num">CH 01</span> The Color Bars</span>
+    <h2 class="title">Warm Tube, Cool Chroma</h2>
+    <p class="lead">Harvest gold, burnt orange and avocado pulled straight off a 1977 living-room couch  grounded by walnut paneling and bone-cream type. Inside the screen, phosphor amber/green glow and hot VHS magenta + cyan for the chromatic-aberration accents.</p>
+    <div class="swatches">
+      <div class="sw" style="background:#4a3120;color:#f4e7c9">Walnut<small>#4a3120 · panel</small></div>
+      <div class="sw" style="background:#e6a92e;color:#241a12">Harvest Gold<small>#e6a92e · primary</small></div>
+      <div class="sw" style="background:#d2602a;color:#241a12">Burnt Orange<small>#d2602a · action</small></div>
+      <div class="sw" style="background:#7f8b39;color:#241a12">Avocado<small>#7f8b39 · accent</small></div>
+      <div class="sw" style="background:#1f9e8f;color:#06231f">Teal<small>#1f9e8f · secondary</small></div>
+      <div class="sw" style="background:#f4e7c9;color:#241a12">Bone<small>#f4e7c9 · text</small></div>
+      <div class="sw" style="background:#0b1410;color:#8bf6c8">Phosphor BG<small>#0b1410 · screen</small></div>
+      <div class="sw" style="background:#ff3d7f;color:#240712">VHS Magenta<small>#ff3d7f · chroma</small></div>
+    </div>
+    <div class="bars">
+      <i style="background:#c0c0c0"></i><i style="background:#c0c000"></i><i style="background:#00c0c0"></i>
+      <i style="background:#00c000"></i><i style="background:#c000c0"></i><i style="background:#c00000"></i><i style="background:#0000c0"></i>
+    </div>
+  </section>
+
+  <!-- ===================== 02 TYPE ===================== -->
+  <section id="type">
+    <span class="eyebrow"><span class="num">CH 02</span> The Type Dial</span>
+    <h2 class="title">Glowing Sign + Terminal + Clean Body</h2>
+    <p class="lead">Three voices: a neon-tube logo, a chunky channel-label face for headings, the unmistakable VCR/on-screen-display monospace for timestamps & metadata, and a clean humanist sans that keeps the actual UX legible and fast.</p>
+    <div class="type-grid">
+      <div class="spec"><div class="lab">Logo  Monoton</div><div class="logo" style="color:#ffd98a;text-shadow:0 0 6px var(--amber),0 0 22px rgba(255,120,50,.7)">episode.lol</div></div>
+      <div class="spec"><div class="lab">Headings  Bungee</div><div class="big-chan">PICK AN EPISODE</div></div>
+      <div class="spec"><div class="lab">On-Screen Display  VT323</div><div class="osd">CH 04 · S03E11 · ▶ PLAY · 22:14 · REC ●</div></div>
+      <div class="spec"><div class="lab">Body / UX  DM Sans</div><div class="body">When you can't decide what to watch, episode.lol spins the dial for you. Search a show, hit the knob, and land on a random episode  complete with the overview, who wrote and directed it, and the guest stars worth staying up for.</div></div>
+    </div>
+  </section>
+
+  <!-- ===================== 03 SCREENS ===================== -->
+  <section id="screens">
+    <span class="eyebrow"><span class="num">CH 03</span> Flip Through the Channels</span>
+    <h2 class="title">The Key Screens</h2>
+    <p class="lead">Every view lives behind glass. The chrome is pure retro; the layout underneath stays conventional and usable. Hit <b>CHANGE CHANNEL</b> at the bottom to surf between them with static.</p>
+
+    <div class="channels">
+      <!-- Home / tuner -->
+      <div class="tv-card">
+        <div class="bezel"><div class="crt"><div class="roll"></div>
+          <div class="tv-screen"><div class="chan-tag"><b>CH</b> 01</div>
+            <div class="tuner">
+              <div class="logo">episode.lol</div>
+              <div class="searchbar"><input value="the office" readonly><button class="go">FIND</button></div>
+              <div class="dial">◄ 02 · 03 · 04 · 05 ►</div>
+            </div>
+          </div>
+        </div></div>
+        <div class="tv-cap">HOME / TUNER<small>Search as a TV dial + popular shows</small></div>
+      </div>
+
+      <!-- Search results / TV guide -->
+      <div class="tv-card">
+        <div class="bezel"><div class="crt"><div class="roll"></div>
+          <div class="tv-screen"><div class="chan-tag"><b>CH</b> 02</div>
+            <div class="guide">
+              <div class="poster" style="background:linear-gradient(135deg,#d2602a,#b8431f)"><span>THE<br>OFFICE</span></div>
+              <div class="poster" style="background:linear-gradient(135deg,#1f9e8f,#13675d)"><span>PARKS &amp;<br>REC</span></div>
+              <div class="poster" style="background:linear-gradient(135deg,#e6a92e,#b8431f)"><span>30<br>ROCK</span></div>
+              <div class="poster" style="background:linear-gradient(135deg,#7f8b39,#4a5a1e)"><span>COMM-<br>UNITY</span></div>
+              <div class="poster" style="background:linear-gradient(135deg,#ff3d7f,#7a1438)"><span>BROOK<br>-LYN 99</span></div>
+              <div class="poster" style="background:linear-gradient(135deg,#36e0d0,#137a70)"><span>ARRES<br>-TED</span></div>
+            </div>
+          </div>
+        </div></div>
+        <div class="tv-cap">SEARCH RESULTS<small>Posters as a printed TV-guide grid</small></div>
+      </div>
+
+      <!-- Show page / big knob -->
+      <div class="tv-card">
+        <div class="bezel"><div class="crt"><div class="roll"></div>
+          <div class="tv-screen"><div class="chan-tag"><b>CH</b> 03</div>
+            <div class="bigpick">
+              <div class="show-name">THE OFFICE · 188 EPISODES</div>
+              <div class="dialknob" onclick="doReveal()"><span>SPIN<br>THE<br>DIAL</span></div>
+              <div class="pickhint">▶ pick a random episode</div>
+            </div>
+          </div>
+        </div></div>
+        <div class="tv-cap">SHOW PAGE<small>The big dial is the whole point</small></div>
+      </div>
+
+      <!-- Reveal -->
+      <div class="tv-card">
+        <div class="bezel"><div class="crt"><div class="roll"></div>
+          <div class="tv-screen">
+            <div class="static-ov" id="revealStatic"></div>
+            <div class="chan-tag"><b>CH</b> 04</div>
+            <div class="reveal" id="revealBox">
+              <div class="tape-reveal">
+                <div class="vhs-float">
+                  <div class="vhs-case" id="revealTape">
+                    <div class="cassette"><div class="cass-face cass-front"><div class="cass-label">episode.lol</div><div class="cass-win"><i></i><i></i></div><div class="cass-flap"></div></div><div class="cass-face cass-spine r"></div><div class="cass-face cass-spine l"></div><div class="cass-face cass-bottom"></div></div>
+                    <div class="vface vfront">
+                      <div class="p-band">★ VHS ★</div>
+                      <div class="p-art" id="revealTapeArt">THE<br>OFFICE</div>
+                      <div class="p-foot">episode.lol</div>
+                      <div class="sheen"></div>
+                    </div>
+                    <div class="vface vspine left"><span>episode.lol</span></div>
+                    <div class="vface vspine right"><span>episode.lol</span></div>
+                    <div class="vface vtop"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="ep-show">The Office</div>
+              <div class="ep-title">“Dinner Party”</div>
+              <div class="ep-meta">S04 · E13</div>
+              <div class="pickhint" style="margin-top:8px">▶ now playing</div>
+            </div>
+          </div>
+        </div></div>
+        <div class="tv-cap">THE REVEAL<small>Channel-surf static → it lands. Click the dial on CH 03</small></div>
+      </div>
+    </div>
+
+    <!-- RICH episode detail, full width -->
+    <div class="channels" style="grid-template-columns:1fr;margin-top:26px">
+      <div class="tv-card">
+        <div class="bezel"><div class="crt"><div class="roll"></div>
+          <div class="tv-screen" style="aspect-ratio:auto;min-height:230px;padding:14px 16px 16px">
+            <div class="chan-tag" style="z-index:9"><b>CH</b> 05</div>
+            <div class="detail">
+
+              <!-- hero still + overlaid title -->
+              <div class="detail-hero">
+                <div class="still"></div>
+                <div class="hero-grad"></div>
+                <div class="hero-osd"><span class="pulse">●</span> NOW PLAYING · SP · 22:14</div>
+                <div class="rating-badge"><b>9.4</b><small>★ TVDB</small></div>
+                <!-- floating VHS tape over the still (spine on the right) -->
+                <div class="tape-hero">
+                  <div class="vhs-float">
+                    <div class="vhs-case" title="Hover to slide the tape out">
+                      <div class="cassette"><div class="cass-face cass-front"><div class="cass-label">episode.lol</div><div class="cass-win"><i></i><i></i></div><div class="cass-flap"></div></div><div class="cass-face cass-spine r"></div><div class="cass-face cass-spine l"></div><div class="cass-face cass-bottom"></div></div>
+                      <div class="vface vfront">
+                        <div class="p-band">★ VHS · episode.lol ★</div>
+                        <div class="p-art">THE<br>OFFICE</div>
+                        <div class="p-foot">COLOR · HiFi STEREO</div>
+                        <div class="sheen"></div>
+                      </div>
+                      <div class="vface vspine left"><span>THE OFFICE · episode.lol</span></div>
+                      <div class="vface vspine right"><span>THE OFFICE · episode.lol</span></div>
+                      <div class="vface vtop"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="hero-title">
+                  <span class="se">S04 · E13</span>
+                  <div class="show">The Office (US)</div>
+                  <h3>Dinner Party</h3>
+                </div>
+              </div>
+
+              <!-- body: synopsis + credits | OSD info panel -->
+              <div class="detail-body">
+                <div class="detail-main">
+                  <div class="section-block">
+                    <div class="lab">▸ Overview</div>
+                    <p>Against everyone's better judgment, Michael and Jan host an intimate dinner party for Jim, Pam, Andy and Angela at the condo. Over candlelight, tiny plasma TVs and Hunter's CD, years of passive-aggressive resentment boil over into one of the most excruciating  and beloved  nights in Dunder Mifflin history.</p>
+                  </div>
+                  <div class="section-block">
+                    <div class="lab">▸ Credits</div>
+                    <div class="credit-grid">
+                      <div class="who"><b>Directed by</b><a class="linkish" href="#">Paul Feig</a></div>
+                      <div class="who"><b>Written by</b><a class="linkish" href="#">Gene Stupnitsky</a>, <a class="linkish" href="#">Lee Eisenberg</a></div>
+                      <div class="who"><b>Editor</b>David Rogers</div>
+                      <div class="who"><b>Cinematographer</b>Randall Einhorn</div>
+                    </div>
+                  </div>
+                  <div class="section-block">
+                    <div class="lab">▸ Guest Stars</div>
+                    <p><a class="linkish" href="#">Melora Hardin</a> · <a class="linkish" href="#">Beth Grant</a> · <a class="linkish" href="#">Jacquie Barnbrook</a></p>
+                  </div>
+
+                  <!-- full cast -->
+                  <div class="section-block cast-wrap">
+                    <div class="lab">▸ Cast</div>
+                    <div class="cast-row">
+                      <div class="cast-card"><div class="avatar" style="background:linear-gradient(135deg,#d2602a,#b8431f)">SC</div><div class="actor">Steve Carell</div><div class="role">Michael</div></div>
+                      <div class="cast-card"><div class="avatar" style="background:linear-gradient(135deg,#7f8b39,#4a5a1e)">RW</div><div class="actor">Rainn Wilson</div><div class="role">Dwight</div></div>
+                      <div class="cast-card"><div class="avatar" style="background:linear-gradient(135deg,#1f9e8f,#13675d)">JK</div><div class="actor">John Krasinski</div><div class="role">Jim</div></div>
+                      <div class="cast-card"><div class="avatar" style="background:linear-gradient(135deg,#e6a92e,#b8431f)">JF</div><div class="actor">Jenna Fischer</div><div class="role">Pam</div></div>
+                      <div class="cast-card"><div class="avatar" style="background:linear-gradient(135deg,#ff3d7f,#7a1438)">MH</div><div class="actor">Melora Hardin</div><div class="role">Jan</div></div>
+                      <div class="cast-card"><div class="avatar" style="background:linear-gradient(135deg,#36e0d0,#137a70)">EH</div><div class="actor">Ed Helms</div><div class="role">Andy</div></div>
+                      <div class="cast-card"><div class="avatar" style="background:linear-gradient(135deg,#9a6cff,#4a2a8e)">AK</div><div class="actor">Angela Kinsey</div><div class="role">Angela</div></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- OSD info panel -->
+                <aside class="info-panel">
+                  <div class="ipt">◍ Episode Info</div>
+                  <div class="irow"><span class="k">First Aired</span><span class="v">Apr 10 2008</span></div>
+                  <div class="irow"><span class="k">Runtime</span><span class="v">22 min</span></div>
+                  <div class="irow"><span class="k">Network</span><span class="v">NBC</span></div>
+                  <div class="irow"><span class="k">Season</span><span class="v">4</span></div>
+                  <div class="irow"><span class="k">Episode</span><span class="v">13</span></div>
+                  <div class="irow"><span class="k">Prod. Code</span><span class="v">4013</span></div>
+                  <div class="irow"><span class="k">Rating</span><span class="v">★ 9.4 / 10</span></div>
+                  <div class="genre-tags"><span>Comedy</span><span>Mockumentary</span><span>Sitcom</span></div>
+                  <div class="progress">
+                    <div class="irow" style="padding-bottom:4px"><span class="k">In the series</span></div>
+                    <div class="bar"><i></i></div>
+                    <small>Episode 65 of 188</small>
+                  </div>
+                </aside>
+              </div>
+
+              <!-- actions -->
+              <div class="action-strip">
+                <button class="prime">▶ PLAY</button>
+                <button>♥ FAVORITE</button>
+                <button>↻ SPIN AGAIN</button>
+                <button>🔗 SHARE PICK</button>
+                <button>↗ IMDB</button>
+              </div>
+
+            </div>
+          </div>
+        </div></div>
+        <div class="tv-cap">EPISODE DETAIL  RICH<small>Still · synopsis · full cast &amp; crew · ratings · network · genres · series progress</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 04 FEATURES ===================== -->
+  <section id="features">
+    <span class="eyebrow"><span class="num">CH 04</span> The New Channels</span>
+    <h2 class="title">Everything the 2025 Ideas Wanted</h2>
+    <p class="lead">The good ideas from last year's attempt, finally fleshed out and dressed for the part.</p>
+    <div class="features">
+      <div class="feat"><div class="ic">📼</div><h3>Favorites Shelf</h3><p>Star episodes you love. They line up like a row of VHS tapes on the shelf, ready to re-watch.</p><span class="tag">localStorage</span></div>
+      <div class="feat"><div class="ic">⏪</div><h3>Rewind Log</h3><p>Every episode the dial has landed on, kept as a history reel so you can jump back to a past pick.</p><span class="tag">per-show + global</span></div>
+      <div class="feat"><div class="ic">🔝</div><h3>Top of the Dial</h3><p>Popular &amp; trending shows on the homepage so there's always something to spin, even with a blank search.</p><span class="tag">TheTVDB v4</span></div>
+      <div class="feat"><div class="ic">🕑</div><h3>Search History</h3><p>Recently looked-up shows, one tap away  no retyping "it's always sunny" for the hundredth time.</p><span class="tag">localStorage</span></div>
+      <div class="feat"><div class="ic">🔗</div><h3>Shareable Picks</h3><p>Every spin gets a permalink (the old <i>?pickedEpisode</i> trick, kept) so you can dare a friend to watch it.</p><span class="tag">deep links</span></div>
+      <div class="feat"><div class="ic">🎚️</div><h3>Filtered Spins</h3><p>Optional: limit the dial to a season, or "anything but the pilot," for pickier movie-night crowds.</p><span class="tag">new</span></div>
+    </div>
+  </section>
+
+  <!-- ===================== 05 UI KIT ===================== -->
+  <section id="kit">
+    <span class="eyebrow"><span class="num">CH 05</span> Parts Bin</span>
+    <h2 class="title">UI Kit</h2>
+    <p class="lead">The reusable chrome: knobs, channel badges, the tracking bar, OSD tags and buttons that feel like they have a satisfying mechanical clunk.</p>
+    <div class="kit">
+      <button class="btn">🔎 FIND SHOW</button>
+      <button class="btn alt">▶ SPIN THE DIAL</button>
+      <span class="badge" style="background:var(--gold);color:var(--ink)">CH 07</span>
+      <span class="badge" style="background:var(--rust);color:var(--cream)">S03E11</span>
+      <span class="badge" style="background:var(--teal);color:#06231f">♥ FAV</span>
+      <span class="tracking">◄◄ TRACKING ►►</span>
+      <span class="badge" style="background:#000;color:#ff4d4d">REC ●</span>
+      <div class="knob" title="knob"></div>
+      <div class="dialknob" style="width:60px;height:60px;box-shadow:0 5px 0 #5a2208"><span style="font-size:11px">PICK</span></div>
+    </div>
+  </section>
+
+  <footer>◖ ◗ &nbsp; episode.lol · 2026 · please be kind, rewind &nbsp; ◖ ◗</footer>
+</div>
+
+<!-- live demo bar -->
+<div class="demobar">
+  <span>▶ LIVE PREVIEW:</span>
+  <button class="btn" onclick="surf()">CHANGE CHANNEL</button>
+  <button class="btn alt" onclick="doReveal()">SPIN THE DIAL</button>
+  <button class="btn" onclick="powerCycle()">POWER</button>
+</div>
+
+<script>
+// live clock in OSD
+function tick(){const d=new Date();document.getElementById('clock').textContent=
+  String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+tick();setInterval(tick,15000);
+
+// power cycle: flash SMPTE bars then logo
+function powerCycle(){
+  const bars=document.getElementById('heroBars');
+  const scr=document.getElementById('heroScreen');
+  scr.style.transition='opacity .15s';scr.style.opacity='0';
+  bars.style.opacity='1';
+  setTimeout(()=>{bars.style.opacity='0';scr.style.opacity='1';},650);
+}
+
+// channel surf: brief static flash on hero
+function surf(){
+  const scr=document.getElementById('heroScreen');
+  const bars=document.getElementById('heroBars');
+  bars.style.opacity='.85';scr.style.opacity='.2';
+  let n=0;const i=setInterval(()=>{bars.style.filter='hue-rotate('+(n*60)+'deg)';n++;
+    if(n>4){clearInterval(i);bars.style.opacity='0';bars.style.filter='';scr.style.opacity='1';}},90);
+}
+
+// the reveal: static, then a quick title shuffle that lands
+const EPS=[
+ {show:'The Office',t:'“Dinner Party”',m:'S04 · E13'},
+ {show:'Parks & Rec',t:'“Flu Season”',m:'S03 · E02'},
+ {show:'30 Rock',t:'“Reaganing”',m:'S05 · E05'},
+ {show:'Community',t:'“Remedial Chaos Theory”',m:'S03 · E04'},
+ {show:'Brooklyn 99',t:'“The Bet”',m:'S01 · E13'},
+ {show:'Arrested Dev.',t:'“Pier Pressure”',m:'S01 · E10'}
+];
+function doReveal(){
+  const stat=document.getElementById('revealStatic');
+  const box=document.getElementById('revealBox');
+  stat.style.transition='none';stat.style.opacity='.9';
+  const tape=document.getElementById('revealTape');
+  const tapeArt=document.getElementById('revealTapeArt');
+  if(tape){tape.classList.remove('spinning','ejected');void tape.offsetWidth;tape.classList.add('spinning');}
+  document.querySelector('#screens .channels').scrollIntoView({behavior:'smooth',block:'center'});
+  let n=0;const i=setInterval(()=>{
+    const e=EPS[Math.floor(Math.random()*EPS.length)];
+    box.querySelector('.ep-show').textContent=e.show;
+    box.querySelector('.ep-title').textContent=e.t;
+    box.querySelector('.ep-meta').textContent=e.m;
+    if(tapeArt) tapeArt.innerHTML=e.show.toUpperCase().replace(/ /g,'<br>');
+    stat.style.backgroundPosition=(Math.random()*200)+'px '+(Math.random()*200)+'px';
+    n++;
+    if(n>9){clearInterval(i);stat.style.transition='opacity .25s';stat.style.opacity='0';
+      if(tape){setTimeout(()=>tape.classList.add('ejected'),250);}}
+  },110);
+}
+</script>
+</body>
+</html>
