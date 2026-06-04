@@ -80,6 +80,8 @@ export default function Home() {
 
   return (
     <div>
+        <p className="hint">Pick a random episode from a TV show!</p>
+
       <div className="tuner">
         <form className="searchbar" onSubmit={onSubmit} role="search">
           <label className="clip" htmlFor="show">Search for a show</label>
@@ -93,7 +95,6 @@ export default function Home() {
           />
           <button type="submit">🔎 FIND</button>
         </form>
-        <p className="hint">if posters don't load, try pausing your ad blocker</p>
       </div>
 
       {loading && <div className="spinner" aria-label="Searching" />}
@@ -147,7 +148,7 @@ export default function Home() {
 
           {recentShows.length > 0 && (
             <section style={{ marginTop: 18 }}>
-              <span className="eyebrow">Recently Visited</span>
+              <span className="eyebrow">Your Recent Shows</span>
               <div className="tape-grid sm" style={{ marginTop: 14 }}>
                 {recentShows.map((s) => (
                   <a key={s.id} className="tape-cell" href={`/series/${s.id}`}>
@@ -161,7 +162,7 @@ export default function Home() {
 
           {picks.length > 0 && (
             <section style={{ marginTop: 22 }}>
-              <span className="eyebrow">Recently Picked</span>
+              <span className="eyebrow">Your Recent Picks</span>
               <div className="cards" style={{ marginTop: 10 }}>
                 {picks.slice(0, 8).map((p) => (
                   <a key={p.epId} className="mini" href={`/series/${p.seriesId}?ep=${p.epId}`}>
@@ -175,7 +176,7 @@ export default function Home() {
 
           {featured.length > 0 && (
             <section style={{ marginTop: 22 }}>
-              <span className="eyebrow">Classics</span>
+              <span className="eyebrow">Popular</span>
               <div className="tape-grid sm" style={{ marginTop: 14 }}>
                 {featured.map((s) => (
                   <a key={s.id} className="tape-cell" href={`/series/${s.id}`}>
