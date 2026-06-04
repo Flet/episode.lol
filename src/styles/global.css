@@ -466,6 +466,12 @@ a.cast-card:hover .actor { color: var(--cyan); }
   .hero-title { left: 12px; right: 12px; }
   .dialknob { width: 104px; height: 104px; }
   .tv-controls { display: none; }
+
+  .pick-btn { display: inline-block; font-family: var(--font-chan); font-size: clamp(12px, 4.5vw, 20px); letter-spacing: .03em; margin: 10px;
+  color: var(--ink); text-align: center; text-decoration: none; border: none; cursor: pointer;
+  background: linear-gradient(180deg, var(--gold), var(--orange)); padding: 10px 16px; border-radius: 14px;
+  box-shadow: 0 8px 0 #7a3a14, 0 14px 24px rgba(0,0,0,.45); transition: transform .08s, box-shadow .08s; }
+  
 }
 @media (max-width: 380px) {
   .ep-tape { transform: scale(1.18); }
