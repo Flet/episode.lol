@@ -58,23 +58,37 @@ async function token(): Promise<string> {
   return login();
 }
 
-/** Authenticated GET against the v4 API with one automatic re-login on 401. */
-async function get<T = unknown>(path: string, retry = true): Promise<T> {
+/** TheTVDB v4 pagination envelope (sibling of `data` on paged responses). */
+export interface TvdbLinks {
+  prev?: string | null;
+  self?: string | null;
+  next?: string | null;
+  total_items?: number;
+  page_size?: number;
+}
+
+/** Authenticated GET returning the full v4 envelope ({ data, links }), with one re-login on 401. */
+async function getRaw<T = unknown>(path: string, retry = true): Promise<{ data?: T; links?: TvdbLinks }> {
   const t = await token();
   const res = await fetch(`${BASE}${path}`, {
     headers: { Authorization: `Bearer ${t}`, Accept: 'application/json' },
   });
   if (res.status === 401 && retry) {
     cachedToken = null;
-    return get<T>(path, false);
+    return getRaw<T>(path, false);
   }
   if (res.status === 404) throw new TvdbError('Not found on TheTVDB.', 404);
   if (!res.ok) {
     const body = await res.text().catch(() => '');
     throw new TvdbError(`TheTVDB request failed (${res.status}). ${body}`.trim(), 502);
   }
-  const json = (await res.json()) as { data?: T };
-  return json.data as T;
+  return (await res.json()) as { data?: T; links?: TvdbLinks };
+}
+
+/** Authenticated GET against the v4 API, returning just the `data` payload. */
+async function get<T = unknown>(path: string): Promise<T> {
+  const { data } = await getRaw<T>(path);
+  return data as T;
 }
 
 /** Normalise possibly-relative artwork paths to absolute URLs. */
@@ -111,8 +125,10 @@ export function seriesExtended(id: string | number) {
   return get<any>(`/series/${id}/extended?meta=translations&short=false`);
 }
 
-export function seriesEpisodes(id: string | number, page = 0, seasonType = 'default') {
-  return get<any>(`/series/${id}/episodes/${seasonType}?page=${page}`);
+/** One page of episodes plus `hasNext` (true while TheTVDB's `links.next` is set). */
+export async function seriesEpisodes(id: string | number, page = 0, seasonType = 'default') {
+  const { data, links } = await getRaw<any>(`/series/${id}/episodes/${seasonType}?page=${page}`);
+  return { ...(data ?? {}), hasNext: Boolean(links?.next) };
 }
 
 export function episodeExtended(id: string | number) {

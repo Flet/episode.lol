@@ -6,8 +6,6 @@ import type { EpisodeSummary, SeriesResponse } from '@/lib/types';
 
 export const prerender = false;
 
-const MAX_PAGES = 25;
-
 export const GET: APIRoute = async ({ params }) => {
   const id = params.id?.trim();
   if (!id) return fail('Missing series id.', 400);
@@ -17,17 +15,17 @@ export const GET: APIRoute = async ({ params }) => {
     const episodes: EpisodeSummary[] = [];
     let extendedRaw: any = null;
 
-    for (let page = 0; page < MAX_PAGES; page++) {
+    // Follow TheTVDB's own pagination (`links.next`) until there are no more pages.
+    for (let page = 0; ; page++) {
       const data = await seriesEpisodes(id, page);
       if (page === 0) extendedRaw = data?.series ?? null;
       const batch: any[] = Array.isArray(data?.episodes) ? data.episodes : [];
-      if (batch.length === 0) break;
       for (const e of batch) {
         const ep = mapEpisodeSummary(e);
         // skip "specials" (season 0) from the random pool, but keep real episodes
         if (ep.season > 0) episodes.push(ep);
       }
-      if (batch.length < 100) break; // last page
+      if (!data.hasNext || batch.length === 0) break;
     }
 
     // Extended record for richer detail (artwork/banner for the VHS tape, cast, genres).
