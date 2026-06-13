@@ -1,0 +1,86 @@
+---
+// Shared "All episodes" index with a grid/list view toggle (default grid).
+// Rendered once on the server (links + stills are crawlable); a tiny inline
+// script flips the layout via a `data-view` attribute and remembers the choice.
+import { episodePath } from '@/lib/slug';
+import type { EpisodeSummary } from '@/lib/types';
+
+interface Props {
+  seriesId: string;
+  seriesName: string;
+  episodes: EpisodeSummary[];
+  currentEpId?: string;
+}
+const { seriesId, seriesName, episodes, currentEpId } = Astro.props;
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const bySeason = new Map<number, EpisodeSummary[]>();
+for (const e of episodes) {
+  const arr = bySeason.get(e.season) ?? [];
+  arr.push(e);
+  bySeason.set(e.season, arr);
+}
+const seasons = [...bySeason.keys()].sort((a, b) => a - b);
+---
+
+<section class="episode-index" data-view="grid">
+  <div class="ei-head">
+    <h2>All episodes</h2>
+    <div class="view-toggle" role="group" aria-label="Episode view">
+      <button type="button" class="vt vt-grid" data-set-view="grid" aria-pressed="true">▦ Grid</button>
+      <button type="button" class="vt vt-list" data-set-view="list" aria-pressed="false">☰ List</button>
+    </div>
+  </div>
+
+  {seasons.map((s) => (
+    <section class="season-block">
+      <h3>Season {s}</h3>
+      <ul>
+        {bySeason.get(s)!.map((e) => (
+          <li>
+            <a
+              href={episodePath(seriesId, seriesName, e)}
+              aria-current={e.id === currentEpId ? 'true' : undefined}
+            >
+              <span class="ep-thumb">
+                {e.image && <img src={e.image} alt={`${e.name ?? `Episode ${e.number}`} still`} loading="lazy" />}
+              </span>
+              <span class="epn">S{pad(e.season)}E{pad(e.number)}</span>
+              <span class="ept">{e.name ?? `Episode ${e.number}`}</span>
+              {e.aired && <time datetime={e.aired}>{e.aired}</time>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+</section>
+
+<script>
+  const KEY = 'eplol.epview';
+  let saved = 'grid';
+  try {
+    saved = localStorage.getItem(KEY) === 'list' ? 'list' : 'grid';
+  } catch {
+    /* private mode */
+  }
+  for (const index of document.querySelectorAll<HTMLElement>('.episode-index')) {
+    const buttons = Array.from(index.querySelectorAll<HTMLButtonElement>('.vt'));
+    const apply = (view: string) => {
+      index.dataset.view = view;
+      for (const b of buttons) b.setAttribute('aria-pressed', String(b.dataset.setView === view));
+    };
+    apply(saved);
+    for (const b of buttons) {
+      b.addEventListener('click', () => {
+        const view = b.dataset.setView || 'grid';
+        apply(view);
+        try {
+          localStorage.setItem(KEY, view);
+        } catch {
+          /* ignore */
+        }
+      });
+    }
+  }
+</script>

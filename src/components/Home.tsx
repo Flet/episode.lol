@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import type { FormEvent } from 'react';
 import type { ShowSummary } from '@/lib/types';
 import MiniTape from './MiniTape';
+import { seriesPath, episodePath } from '@/lib/slug';
 import {
   addSearch,
   getPicks,
@@ -80,8 +81,6 @@ export default function Home() {
 
   return (
     <div>
-        <p className="hint">Pick a random episode from a TV show!</p>
-
       <div className="tuner">
         <form className="searchbar" onSubmit={onSubmit} role="search">
           <label className="clip" htmlFor="show">Search for a show</label>
@@ -113,7 +112,7 @@ export default function Home() {
           ) : (
             <div className="tape-grid">
               {results.map((s) => (
-                <a key={s.id} className="tape-cell" href={`/series/${s.id}`}>
+                <a key={s.id} className="tape-cell" href={seriesPath(s.id, s.name)}>
                   <MiniTape title={s.name} poster={s.poster} banner={s.banner} />
                   <div className="tape-cap">
                     {s.name}
@@ -135,7 +134,7 @@ export default function Home() {
               <div className="cards" style={{ marginTop: 10 }}>
                 {favorites.map((f) => (
                   <div className="mini fav" key={f.epId}>
-                    <a href={`/series/${f.seriesId}?ep=${f.epId}`}>
+                    <a href={episodePath(f.seriesId, f.seriesName, { season: f.season, number: f.number, name: f.title })}>
                       <h3>{f.title}</h3>
                       <p>{f.seriesName} · S{f.season} E{f.number}</p>
                     </a>
@@ -151,7 +150,7 @@ export default function Home() {
               <span className="eyebrow">Your Recent Shows</span>
               <div className="tape-grid sm" style={{ marginTop: 14 }}>
                 {recentShows.map((s) => (
-                  <a key={s.id} className="tape-cell" href={`/series/${s.id}`}>
+                  <a key={s.id} className="tape-cell" href={seriesPath(s.id, s.name)}>
                     <MiniTape title={s.name} poster={s.poster} banner={s.banner} />
                     <div className="tape-cap">{s.name}</div>
                   </a>
@@ -165,7 +164,7 @@ export default function Home() {
               <span className="eyebrow">Your Recent Picks</span>
               <div className="cards" style={{ marginTop: 10 }}>
                 {picks.slice(0, 8).map((p) => (
-                  <a key={p.epId} className="mini" href={`/series/${p.seriesId}?ep=${p.epId}`}>
+                  <a key={p.epId} className="mini" href={episodePath(p.seriesId, p.seriesName, { season: p.season, number: p.number, name: p.title })}>
                     <h3>{p.title}</h3>
                     <p>{p.seriesName} · S{p.season} E{p.number}</p>
                   </a>
@@ -179,7 +178,7 @@ export default function Home() {
               <span className="eyebrow">Popular</span>
               <div className="tape-grid sm" style={{ marginTop: 14 }}>
                 {featured.map((s) => (
-                  <a key={s.id} className="tape-cell" href={`/series/${s.id}`}>
+                  <a key={s.id} className="tape-cell" href={seriesPath(s.id, s.name)}>
                     <MiniTape title={s.name} poster={s.poster} banner={s.banner} />
                     <div className="tape-cap">{s.name}</div>
                   </a>

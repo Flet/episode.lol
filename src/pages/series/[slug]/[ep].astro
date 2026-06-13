@@ -1,0 +1,87 @@
+---
+export const prerender = false;
+import Base from '@/layouts/Base.astro';
+import ShowView from '@/components/ShowView';
+import EpisodeIndex from '@/components/EpisodeIndex.astro';
+import { getSeriesData } from '@/lib/series';
+import { episodeExtended, TvdbError } from '@/lib/tvdb';
+import { mapEpisodeDetail } from '@/lib/map';
+import { parseSeriesParam, parseEpisodeParam, seriesPath, episodePath } from '@/lib/slug';
+import { tvSeriesLd, tvEpisodeLd } from '@/lib/jsonld';
+
+const { slug, ep: epParam } = Astro.params;
+const id = parseSeriesParam(slug);
+if (!id) return Astro.redirect('/');
+
+let data = null;
+try {
+  data = await getSeriesData(id);
+} catch (err) {
+  const e = err as TvdbError;
+  if (e?.status === 404) return Astro.redirect('/', 404);
+}
+
+// Without series data we can't resolve the episode — bounce to the series page,
+// which has its own client-side fallback.
+if (!data) return Astro.redirect(`/series/${slug}`, 302);
+
+const epRef = parseEpisodeParam(epParam);
+const match = epRef
+  ? data.episodes.find((e) => e.season === epRef.season && e.number === epRef.number)
+  : null;
+
+// Unknown / unparseable episode -> series page.
+if (!match) return Astro.redirect(seriesPath(data.detail.id, data.detail.slug ?? data.detail.name), 302);
+
+// Self-canonicalize the full episode URL (also heals the series slug portion).
+const canonicalPath = episodePath(data.detail.id, data.detail.name, match);
+if (`/series/${slug}/${epParam}` !== canonicalPath) return Astro.redirect(canonicalPath, 301);
+
+let picked = null;
+try {
+  picked = mapEpisodeDetail(await episodeExtended(match.id));
+} catch {
+  /* fall back to the client island, which fetches /api/episode itself */
+}
+
+Astro.response.headers.set('Netlify-CDN-Cache-Control', 'public, durable, s-maxage=86400');
+
+const detail = data.detail;
+const pad = (n) => String(n).padStart(2, '0');
+const site = Astro.site?.toString().replace(/\/$/, '') ?? '';
+const canonical = `${site}${canonicalPath}`;
+const code = `S${pad(match.season)}E${pad(match.number)}`;
+const epName = picked?.name || match.name;
+const title = `${detail.name} ${code}${epName ? ` “${epName}”` : ''} — random episode`;
+const description = (picked?.overview || detail.overview || 'pick a random episode of your favorite TV show').slice(0, 155);
+const ogImage = picked?.image ?? detail.poster;
+
+const seriesLd = tvSeriesLd(detail, `${site}${seriesPath(detail.id, detail.slug ?? detail.name)}`);
+const episodeLd = picked ? tvEpisodeLd(detail, picked, canonical) : null;
+---
+
+<Base
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogImage={ogImage}
+  ogType="video.episode"
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(seriesLd)} />
+  {episodeLd && (
+    <script type="application/ld+json" slot="head" set:html={JSON.stringify(episodeLd)} />
+  )}
+
+  <article class="series">
+    <header class="series-head">
+      <h1>{detail.name}</h1>
+      <p class="series-meta">{code}{epName ? ` · ${epName}` : ''}</p>
+    </header>
+
+    <ShowView client:load seriesId={detail.id} initialData={data} initialPicked={picked} initialEp={match.id} />
+
+    {data.episodes.length > 0 && (
+      <EpisodeIndex seriesId={detail.id} seriesName={detail.name} episodes={data.episodes} currentEpId={match.id} />
+    )}
+  </article>
+</Base>

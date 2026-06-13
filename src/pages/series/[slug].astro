@@ -1,0 +1,91 @@
+---
+export const prerender = false;
+import Base from '@/layouts/Base.astro';
+import ShowView from '@/components/ShowView';
+import EpisodeIndex from '@/components/EpisodeIndex.astro';
+import { getSeriesData } from '@/lib/series';
+import { TvdbError } from '@/lib/tvdb';
+import { parseSeriesParam, seriesPath, episodePath } from '@/lib/slug';
+import { tvSeriesLd } from '@/lib/jsonld';
+
+const { slug } = Astro.params;
+const id = parseSeriesParam(slug);
+if (!id) return Astro.redirect('/');
+
+let data = null;
+try {
+  data = await getSeriesData(id);
+} catch (err) {
+  const e = err as TvdbError;
+  if (e?.status === 404) return Astro.redirect('/', 404);
+  // soft failure: fall through and let the client island retry against /api
+}
+
+if (data) {
+  // Legacy `?ep=` deep links -> 301 to the path form.
+  const legacyEp = Astro.url.searchParams.get('ep');
+  if (legacyEp) {
+    const match = data.episodes.find((e) => e.id === legacyEp);
+    if (match) return Astro.redirect(episodePath(data.detail.id, data.detail.name, match), 301);
+  }
+  // Self-canonicalize: heals bare numeric ids, stale slugs and casing.
+  const canonicalPath = seriesPath(data.detail.id, data.detail.slug ?? data.detail.name);
+  if (`/series/${slug}` !== canonicalPath) return Astro.redirect(canonicalPath, 301);
+}
+
+Astro.response.headers.set('Netlify-CDN-Cache-Control', 'public, durable, s-maxage=86400');
+
+const detail = data?.detail;
+const episodes = data?.episodes ?? [];
+const site = Astro.site?.toString().replace(/\/$/, '') ?? '';
+const canonical = detail ? `${site}${seriesPath(detail.id, detail.slug ?? detail.name)}` : undefined;
+const title = detail ? `${detail.name} — pick a random episode` : 'episode.lol';
+const description = detail?.overview
+  ? detail.overview.slice(0, 155)
+  : 'pick a random episode of your favorite TV show';
+
+const metaBits = detail
+  ? [detail.year, detail.network, `${detail.episodeCount} episode${detail.episodeCount === 1 ? '' : 's'}`].filter(Boolean)
+  : [];
+const jsonld = detail ? tvSeriesLd(detail, canonical) : null;
+---
+
+<Base
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogImage={detail?.poster}
+  ogType="video.tv_show"
+  noindex={!detail}
+>
+  {jsonld && (
+    <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonld)} />
+  )}
+
+  {detail ? (
+    <article class="series">
+      <header class="series-head">
+        <h1>{detail.name}</h1>
+        {metaBits.length > 0 && <p class="series-meta">{metaBits.join(' · ')}</p>}
+        {detail.genres.length > 0 && (
+          <div class="genre-tags series-genre-tags">{detail.genres.map((g) => <span>{g}</span>)}</div>
+        )}
+      </header>
+
+      <ShowView client:load seriesId={detail.id} initialData={data} />
+
+      {detail.overview && (
+        <section class="section-block series-about">
+          <div class="lab">▸ About</div>
+          <p>{detail.overview}</p>
+        </section>
+      )}
+
+      {episodes.length > 0 && (
+        <EpisodeIndex seriesId={detail.id} seriesName={detail.name} episodes={episodes} />
+      )}
+    </article>
+  ) : (
+    <ShowView client:load seriesId={id} />
+  )}
+</Base>

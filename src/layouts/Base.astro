@@ -4,10 +4,18 @@ import '@/styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  canonical?: string;
+  ogImage?: string | null;
+  ogType?: string;
+  noindex?: boolean;
 }
 const {
   title = 'episode.lol: pick a random episode of your favorite TV show',
-  description = 'pick a random episode of your favorite TV show'
+  description = 'pick a random episode of your favorite TV show',
+  canonical = Astro.url.href,
+  ogImage = null,
+  ogType = 'website',
+  noindex = false,
 } = Astro.props;
 
 const GA4 = import.meta.env.PUBLIC_GA4_ID;
@@ -22,9 +30,18 @@ const GA4 = import.meta.env.PUBLIC_GA4_ID;
     <meta name="theme-color" content="#241a12" />
     <title>{title}</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonical} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+    <slot name="head" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

@@ -54,7 +54,7 @@ export default function EpisodeDetail({
         hint="Drag to spin · tap to flip"
       />
       <div className="detail-hero">
-        {still ? <div className="still"><img src={still} alt="" /></div> : <div className="still" />}
+        {still ? <div className="still"><img src={still} alt={`${show.name} — ${ep.name || `Episode ${ep.number}`} still`} /></div> : <div className="still" />}
         <div className="hero-grad" />
         <div className="hero-osd"><span className="pulse">●</span> NOW PLAYING{ep.runtime ? ` · ${ep.runtime} MIN` : ''}</div>
         {ep.rating != null && (
@@ -136,7 +136,7 @@ export default function EpisodeDetail({
                 title={`Find ${c.name} on IMDb`}
               >
                 <div className="avatar">
-                  {c.image ? <img src={c.image} alt="" loading="lazy" /> : initials(c.name)}
+                  {c.image ? <img src={c.image} alt={c.name} loading="lazy" /> : initials(c.name)}
                 </div>
                 <div className="actor">{c.name}</div>
                 {c.role && <div className="role">{c.role}</div>}

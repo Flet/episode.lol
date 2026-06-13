@@ -89,7 +89,7 @@ export default function VHSTape({
         <div className={caseClass} id={id} title={hint ?? undefined} style={caseStyle}>
           {/* FRONT = poster */}
           <div className="vface vfront">
-            {poster ? <img className="poster-img" src={poster} alt="" draggable={false} /> : null}
+            {poster ? <img className="poster-img" src={poster} alt={`${title} poster`} draggable={false} /> : null}
             <div className="p-band">★ VHS · episode.lol ★</div>
             {!poster ? <div className="p-art">{artLabel}</div> : <div className="p-art" />}
             <div className="sheen" />
@@ -97,7 +97,7 @@ export default function VHSTape({
 
           {/* BACK = alternate poster (seen as the tape spins) */}
           <div className="vface vback">
-            {backArt ? <img className="poster-img" src={backArt} alt="" draggable={false} /> : <div className="p-art">{artLabel}</div>}
+            {backArt ? <img className="poster-img" src={backArt} alt={`${title} poster (alternate)`} draggable={false} /> : <div className="p-art">{artLabel}</div>}
             <div className="wrap-band" />
             <div className="sheen" />
           </div>
@@ -107,14 +107,14 @@ export default function VHSTape({
           <div className="vface vspine right">
             <div className="spine-inner">
               <div className="sp-band" />
-              {banner ? <img className="banner-img" src={banner} alt="" draggable={false} /> : <span className="sp-title">{artLabel} · episode.lol</span>}
+              {banner ? <img className="banner-img" src={banner} alt={`${title} banner`} draggable={false} /> : <span className="sp-title">{artLabel} · episode.lol</span>}
               {banner ? <div className="vhs-logo"><span>VHS</span></div> : null}
             </div>
           </div>
           <div className="vface vspine left">
             <div className="spine-inner">
               <div className="sp-band" />
-              {banner ? <img className="banner-img" src={banner} alt="" draggable={false} /> : <span className="sp-title">{artLabel} · episode.lol</span>}
+              {banner ? <img className="banner-img" src={banner} alt={`${title} banner`} draggable={false} /> : <span className="sp-title">{artLabel} · episode.lol</span>}
               {banner ? <div className="vhs-logo"><span>VHS</span></div> : null}
             </div>
           </div>

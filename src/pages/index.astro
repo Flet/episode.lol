@@ -1,8 +1,39 @@
 ---
+export const prerender = false;
 import Base from '@/layouts/Base.astro';
 import Home from '@/components/Home';
+import { getFeatured } from '@/lib/featured';
+import { seriesPath } from '@/lib/slug';
+
+let featured = [];
+try {
+  featured = await getFeatured();
+} catch {
+  featured = [];
+}
+Astro.response.headers.set('Netlify-CDN-Cache-Control', 'public, durable, s-maxage=86400');
+const site = Astro.site?.toString().replace(/\/$/, '') ?? '';
 ---
 
-<Base>
+<Base canonical={`${site}/`}>
+  <h1 class="home-h1">Pick a random episode of your favorite TV show</h1>
+  <p class="home-tagline">
+    Spin the tape and let episode.lol surprise you with a random episode from any series —
+    sitcoms, crime dramas, cartoons and more.
+  </p>
+
   <Home client:load />
+
+  {featured.length > 0 && (
+    <nav class="popular-index" aria-label="Popular shows">
+      <h2>Browse popular shows</h2>
+      <ul>
+        {featured.map((s) => (
+          <li>
+            <a href={seriesPath(s.id, s.name)}>{s.name}{s.year ? ` (${s.year})` : ''}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )}
 </Base>

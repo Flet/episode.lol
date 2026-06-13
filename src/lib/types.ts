@@ -20,6 +20,7 @@ export interface Person {
 export interface SeriesDetail {
   id: string;
   name: string;
+  slug?: string;
   overview?: string;
   poster?: string | null;
   posterAlt?: string | null;

@@ -104,6 +104,7 @@ export function mapSeriesDetail(raw: any, episodeCount: number): SeriesDetail {
   return {
     id: String(raw?.id ?? ''),
     name: raw?.name ?? 'Untitled',
+    slug: raw?.slug || undefined,
     overview: raw?.overview,
     poster,
     posterAlt: pickPosterAlt(raw?.artworks, poster),

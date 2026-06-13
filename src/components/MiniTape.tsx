@@ -19,7 +19,7 @@ export default function MiniTape({ title, poster, banner, className, style }: Pr
       <div className="mt-box">
         {/* FRONT = poster sleeve */}
         <div className="mt-front">
-          {poster ? <img className="mt-poster" src={poster} alt="" loading="lazy" /> : null}
+          {poster ? <img className="mt-poster" src={poster} alt={`${title} poster`} loading="lazy" /> : null}
           <div className="mt-band">★ VHS · episode.lol ★</div>
           {!poster ? <div className="mt-art">{artLabel}</div> : <div className="mt-art" />}
         </div>
@@ -29,7 +29,7 @@ export default function MiniTape({ title, poster, banner, className, style }: Pr
           <div className="mt-spine-inner">
             <div className="mt-sp-band" />
             {banner ? (
-              <img className="mt-spine-img" src={banner} alt="" loading="lazy" />
+              <img className="mt-spine-img" src={banner} alt={`${title} banner`} loading="lazy" />
             ) : (
               <span className="mt-sp-title">{artLabel} · episode.lol</span>
             )}
@@ -40,7 +40,7 @@ export default function MiniTape({ title, poster, banner, className, style }: Pr
           <div className="mt-spine-inner">
             <div className="mt-sp-band" />
             {banner ? (
-              <img className="mt-spine-img" src={banner} alt="" loading="lazy" />
+              <img className="mt-spine-img" src={banner} alt={`${title} banner`} loading="lazy" />
             ) : (
               <span className="mt-sp-title">{artLabel} · episode.lol</span>
             )}

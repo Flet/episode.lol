@@ -4,20 +4,27 @@ import type { SeriesResponse, SeriesDetail, EpisodeSummary, EpisodeDetail as EpD
 import VHSTape from './VHSTape';
 import EpisodeDetail from './EpisodeDetail';
 import { addPick, addRecentShow, isFavorite, toggleFavorite } from '@/lib/storage';
+import { seriesPath, episodePath } from '@/lib/slug';
 
-interface Props { seriesId: string; initialEp?: string | null; }
+interface Props {
+  seriesId: string;
+  initialEp?: string | null;
+  // server-fetched data (SSR): when present the island skips its own /api fetch
+  initialData?: SeriesResponse | null;
+  initialPicked?: EpDetail | null;
+}
 const rand = (n: number) => Math.floor(Math.random() * n);
 
-export default function ShowView({ seriesId, initialEp }: Props) {
-  const [detail, setDetail] = useState<SeriesDetail | null>(null);
-  const [episodes, setEpisodes] = useState<EpisodeSummary[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function ShowView({ seriesId, initialEp, initialData = null, initialPicked = null }: Props) {
+  const [detail, setDetail] = useState<SeriesDetail | null>(initialData?.detail ?? null);
+  const [episodes, setEpisodes] = useState<EpisodeSummary[]>(initialData?.episodes ?? []);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
   const [season, setSeason] = useState<number | 'all'>('all');
 
   const [revealing, setRevealing] = useState(false);
   const [flash, setFlash] = useState<{ show: string; title: string; meta: string }>({ show: '', title: '', meta: '' });
-  const [picked, setPicked] = useState<EpDetail | null>(null);
+  const [picked, setPicked] = useState<EpDetail | null>(initialPicked);
   const [favorited, setFavorited] = useState(false);
   const detailRef = useRef<HTMLDivElement>(null);
   const tapStart = useRef<{ x: number; y: number; t: number } | null>(null);
@@ -41,14 +48,27 @@ export default function ShowView({ seriesId, initialEp }: Props) {
       epId: ep.id, seriesId: show.id, seriesName: show.name,
       title: ep.name || `Episode ${ep.number}`, season: ep.season, number: ep.number, ts: Date.now(),
     });
-    const url = new URL(window.location.href);
-    url.searchParams.set('ep', ep.id);
-    window.history.replaceState({}, '', url);
+    window.history.replaceState({}, '', episodePath(show.id, show.name, ep));
     return ep;
   }, []);
 
   // initial series load
   useEffect(() => {
+    // SSR path: the page already fetched the series (and maybe the episode), so
+    // just record history/favorites client-side and skip the network round-trip.
+    if (initialData) {
+      addRecentShow({ id: initialData.detail.id, name: initialData.detail.name, poster: initialData.detail.poster, banner: initialData.detail.banner });
+      if (initialPicked) {
+        setFavorited(isFavorite(initialPicked.id));
+        addPick({
+          epId: initialPicked.id, seriesId: initialData.detail.id, seriesName: initialData.detail.name,
+          title: initialPicked.name || `Episode ${initialPicked.number}`,
+          season: initialPicked.season, number: initialPicked.number, ts: Date.now(),
+        });
+      }
+      return;
+    }
+
     let alive = true;
     (async () => {
       try {
@@ -69,7 +89,7 @@ export default function ShowView({ seriesId, initialEp }: Props) {
       }
     })();
     return () => { alive = false; };
-  }, [seriesId, initialEp, loadEpisode]);
+  }, [seriesId, initialEp, initialData, initialPicked, loadEpisode]);
 
   const spin = useCallback(async () => {
     if (!detail || pool.length === 0 || revealing) return;
@@ -154,14 +174,6 @@ export default function ShowView({ seriesId, initialEp }: Props) {
 
   return (
     <div>
-      <div className="show-hero">
-        <div className="show-name">{detail.name}</div>
-        <div className="show-sub">
-          {detail.episodeCount} EPISODE{detail.episodeCount === 1 ? '' : 'S'}
-          {detail.year ? ` · ${detail.year}` : ''}
-        </div>
-      </div>
-
       {/* series-page state: tape on top, PICK button below (the tape spins when pressed) */}
       {(!picked || revealing) && (
         <div className="pick-zone">
@@ -227,7 +239,7 @@ export default function ShowView({ seriesId, initialEp }: Props) {
             />
           </div>
           <div className="dial-zone">
-            <a className="pick-btn" href={`/series/${seriesId}`}>↻ PICK AGAIN</a>
+            <a className="pick-btn" href={seriesPath(detail.id, detail.name)}>↻ PICK AGAIN</a>
             <a className="pick-btn" href={`/`}>HOME</a>
           </div>
         </>
