@@ -31,7 +31,7 @@ const picks = [...rotate(similar, offset), ...rotate(rest, offset)].slice(0, lim
 
 {picks.length > 0 && (
   <nav class="popular-index related-index" aria-label="More shows">
-    <h2>More shows to spin</h2>
+    <h2>More shows</h2>
     <ul>
       {picks.map((s) => (
         <li><a href={seriesPath(s.id, s.name)}>{s.name}</a></li>
