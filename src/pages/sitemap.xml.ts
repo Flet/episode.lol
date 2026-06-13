@@ -1,21 +1,16 @@
 import type { APIRoute } from 'astro';
-import { getFeatured } from '@/lib/featured';
+import { SHOWS } from '@/lib/shows';
 import { seriesPath } from '@/lib/slug';
 
 export const prerender = false;
 
 // The full catalogue is all of TheTVDB, so we can't enumerate it. We seed the
-// crawl with the homepage + curated popular shows; the per-show episode index
-// (real <a> links on each series page) lets crawlers walk deeper from there.
+// crawl with the homepage + the curated SHOWS pool (static, no API calls); the
+// per-show episode index + "More shows" links on each page then let crawlers
+// walk from series to episodes and sideways across the catalogue.
 export const GET: APIRoute = async ({ site }) => {
   const base = (site?.toString() ?? 'https://episode.lol/').replace(/\/$/, '');
-  const locs = [`${base}/`];
-  try {
-    const featured = await getFeatured();
-    for (const s of featured) locs.push(`${base}${seriesPath(s.id, s.name)}`);
-  } catch {
-    /* still emit at least the homepage */
-  }
+  const locs = [`${base}/`, ...SHOWS.map((s) => `${base}${seriesPath(s.id, s.name)}`)];
 
   const body = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

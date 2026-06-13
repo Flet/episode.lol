@@ -547,5 +547,5 @@ a.cast-card:hover .actor { color: var(--cyan); }
 @media (max-width: 600px) {
   .episode-index[data-view="list"] li a { flex-wrap: wrap; gap: 4px 10px; }
   .episode-index[data-view="list"] time { width: 100%; }
-  .episode-index[data-view="grid"] ul { grid-template-columns: repeat(2, 1fr); }
+  .episode-index[data-view="grid"] ul { grid-template-columns: 1fr; }
 }

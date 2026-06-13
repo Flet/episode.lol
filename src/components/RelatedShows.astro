@@ -1,0 +1,41 @@
+---
+// "More shows to spin" — cross-links to other series at the bottom of every
+// series/episode page, so crawlers (and people) can hop sideways across the
+// catalogue instead of only down into one show. Server-rendered, zero API
+// calls (reads the static SHOWS pool), and stable per page: genre-similar shows
+// come first, then a rotating window of the rest keyed off the current id, so
+// each show links to a varied-but-consistent subset.
+import { SHOWS } from '@/lib/shows';
+import { seriesPath } from '@/lib/slug';
+
+interface Props {
+  currentId: string;
+  genres?: string[];
+  limit?: number;
+}
+const { currentId, genres = [], limit = 12 } = Astro.props;
+
+const rotate = (arr, by) => {
+  if (arr.length === 0) return arr;
+  const k = (((by % arr.length) + arr.length) % arr.length);
+  return arr.slice(k).concat(arr.slice(0, k));
+};
+
+const offset = Number(currentId) || 0;
+const pool = SHOWS.filter((s) => s.id !== currentId);
+const gset = new Set(genres);
+const similar = pool.filter((s) => s.genres.some((g) => gset.has(g)));
+const rest = pool.filter((s) => !s.genres.some((g) => gset.has(g)));
+const picks = [...rotate(similar, offset), ...rotate(rest, offset)].slice(0, limit);
+---
+
+{picks.length > 0 && (
+  <nav class="popular-index related-index" aria-label="More shows">
+    <h2>More shows to spin</h2>
+    <ul>
+      {picks.map((s) => (
+        <li><a href={seriesPath(s.id, s.name)}>{s.name}</a></li>
+      ))}
+    </ul>
+  </nav>
+)}

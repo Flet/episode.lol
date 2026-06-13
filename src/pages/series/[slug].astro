@@ -3,10 +3,11 @@ export const prerender = false;
 import Base from '@/layouts/Base.astro';
 import ShowView from '@/components/ShowView';
 import EpisodeIndex from '@/components/EpisodeIndex.astro';
+import RelatedShows from '@/components/RelatedShows.astro';
 import { getSeriesData } from '@/lib/series';
 import { TvdbError } from '@/lib/tvdb';
 import { parseSeriesParam, seriesPath, episodePath } from '@/lib/slug';
-import { tvSeriesLd } from '@/lib/jsonld';
+import { tvSeriesLd, breadcrumbLd } from '@/lib/jsonld';
 
 const { slug } = Astro.params;
 const id = parseSeriesParam(slug);
@@ -48,6 +49,12 @@ const metaBits = detail
   ? [detail.year, detail.network, `${detail.episodeCount} episode${detail.episodeCount === 1 ? '' : 's'}`].filter(Boolean)
   : [];
 const jsonld = detail ? tvSeriesLd(detail, canonical) : null;
+const breadcrumb = detail
+  ? breadcrumbLd([
+      { name: 'Home', url: `${site}/` },
+      { name: detail.name, url: canonical! },
+    ])
+  : null;
 ---
 
 <Base
@@ -60,6 +67,9 @@ const jsonld = detail ? tvSeriesLd(detail, canonical) : null;
 >
   {jsonld && (
     <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonld)} />
+  )}
+  {breadcrumb && (
+    <script type="application/ld+json" slot="head" set:html={JSON.stringify(breadcrumb)} />
   )}
 
   {detail ? (
@@ -84,6 +94,8 @@ const jsonld = detail ? tvSeriesLd(detail, canonical) : null;
       {episodes.length > 0 && (
         <EpisodeIndex seriesId={detail.id} seriesName={detail.name} episodes={episodes} />
       )}
+
+      <RelatedShows currentId={detail.id} genres={detail.genres} />
     </article>
   ) : (
     <ShowView client:load seriesId={id} />

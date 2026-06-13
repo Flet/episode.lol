@@ -3,11 +3,12 @@ export const prerender = false;
 import Base from '@/layouts/Base.astro';
 import ShowView from '@/components/ShowView';
 import EpisodeIndex from '@/components/EpisodeIndex.astro';
+import RelatedShows from '@/components/RelatedShows.astro';
 import { getSeriesData } from '@/lib/series';
 import { episodeExtended, TvdbError } from '@/lib/tvdb';
 import { mapEpisodeDetail } from '@/lib/map';
 import { parseSeriesParam, parseEpisodeParam, seriesPath, episodePath } from '@/lib/slug';
-import { tvSeriesLd, tvEpisodeLd } from '@/lib/jsonld';
+import { tvSeriesLd, tvEpisodeLd, breadcrumbLd } from '@/lib/jsonld';
 
 const { slug, ep: epParam } = Astro.params;
 const id = parseSeriesParam(slug);
@@ -56,8 +57,14 @@ const title = `${detail.name} ${code}${epName ? ` “${epName}”` : ''} — ran
 const description = (picked?.overview || detail.overview || 'pick a random episode of your favorite TV show').slice(0, 155);
 const ogImage = picked?.image ?? detail.poster;
 
-const seriesLd = tvSeriesLd(detail, `${site}${seriesPath(detail.id, detail.slug ?? detail.name)}`);
+const seriesUrl = `${site}${seriesPath(detail.id, detail.slug ?? detail.name)}`;
+const seriesLd = tvSeriesLd(detail, seriesUrl);
 const episodeLd = picked ? tvEpisodeLd(detail, picked, canonical) : null;
+const breadcrumb = breadcrumbLd([
+  { name: 'Home', url: `${site}/` },
+  { name: detail.name, url: seriesUrl },
+  { name: `${code}${epName ? ` ${epName}` : ''}`, url: canonical },
+]);
 ---
 
 <Base
@@ -71,6 +78,7 @@ const episodeLd = picked ? tvEpisodeLd(detail, picked, canonical) : null;
   {episodeLd && (
     <script type="application/ld+json" slot="head" set:html={JSON.stringify(episodeLd)} />
   )}
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(breadcrumb)} />
 
   <article class="series">
     <header class="series-head">
@@ -83,5 +91,7 @@ const episodeLd = picked ? tvEpisodeLd(detail, picked, canonical) : null;
     {data.episodes.length > 0 && (
       <EpisodeIndex seriesId={detail.id} seriesName={detail.name} episodes={data.episodes} currentEpId={match.id} />
     )}
+
+    <RelatedShows currentId={detail.id} genres={detail.genres} />
   </article>
 </Base>
