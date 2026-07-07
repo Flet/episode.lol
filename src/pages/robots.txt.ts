@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 
-export const prerender = false;
+// Prerendered to a static dist/robots.txt at build time — no runtime data, so
+// there's no reason to serve it from an on-demand function.
+export const prerender = true;
 
 export const GET: APIRoute = async ({ site }) => {
   const base = (site?.toString() ?? 'https://episode.lol/').replace(/\/$/, '');
