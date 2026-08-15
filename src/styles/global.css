@@ -72,19 +72,6 @@ img { max-width: 100%; display: block; }
   border-radius: 60px;
 }
 .crt > .crt-body { position: relative; z-index: 2; padding: 22px; }
-.crt::after { /* scanlines (subtle for readability) */
-  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 6;
-  background: repeating-linear-gradient(0deg, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.16) 3px 2px);
-  mix-blend-mode: multiply;
-}
-.crt::before { /* curvature vignette */
-  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 5;
-  background: radial-gradient(115% 125% at 50% 50%, transparent 60%, rgba(0,0,0,.5) 100%);
-  box-shadow: inset 0 0 60px 8px rgba(0,0,0,.55);
-}
-.crt .roll { position: absolute; left: 0; right: 0; height: 38%; z-index: 6; pointer-events: none;
-  background: linear-gradient(180deg, transparent, rgba(255,255,255,.04), transparent); animation: roll 8s linear infinite; }
-@keyframes roll { 0% { top: -40%; } 100% { top: 120%; } }
 .tv-controls { display: flex; align-items: center; justify-content: space-between; padding: 12px 6px 2px; }
 .brand-plate { font-family: var(--font-chan); font-size: 12px; letter-spacing: .12em; color: #e9cfa3; opacity: .8; }
 .knobs { display: flex; gap: 12px; justify-content: space-between; }
@@ -477,7 +464,7 @@ a.cast-card:hover .actor { color: var(--cyan); }
   .ep-tape { transform: scale(1.18); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .vhs-float, .crt .roll, .spinner { animation: none !important; }
+  .vhs-float, .spinner { animation: none !important; }
   .vhs-case, .cassette { transition: none !important; }
 }
 
