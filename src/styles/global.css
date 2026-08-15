@@ -471,9 +471,6 @@ a.cast-card:hover .actor { color: var(--cyan); }
 /* ---------- server-rendered SEO content (series header, episode index, home) ---------- */
 .home-h1 { font-family: var(--font-chan); font-size: clamp(20px, 4.6vw, 32px); line-height: 1.15;
   color: var(--cyan); text-shadow: 1.5px 1.5px 0 var(--magenta); text-align: center; margin: 4px 0 6px; }
-.home-tagline { font-family: var(--font-osd); font-size: 19px; color: var(--gold); opacity: .85;
-  text-align: center; max-width: 640px; margin: 0 auto 6px; }
-
 .series-head { text-align: center; margin-bottom: 6px; }
 .series-head h1 { font-family: var(--font-chan); font-size: clamp(20px, 4.4vw, 30px); margin: 4px 0;
   color: var(--cyan); text-shadow: 1.5px 1.5px 0 var(--magenta); }
