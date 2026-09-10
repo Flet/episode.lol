@@ -11,6 +11,9 @@ export default defineConfig({
   output: 'static',
   adapter: netlify(),
   integrations: [react()],
+  // Astro 7 defaults to 'jsx' whitespace rules, which strip the space between
+  // inline siblings split across lines (e.g. the footer links). Keep HTML rules.
+  compressHTML: true,
   vite: {
     build: { sourcemap: false },
   },

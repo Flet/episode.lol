@@ -48,7 +48,7 @@ try {
 Astro.response.headers.set('Netlify-CDN-Cache-Control', 'public, durable, s-maxage=86400');
 
 const detail = data.detail;
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 const site = Astro.site?.toString().replace(/\/$/, '') ?? '';
 const canonical = `${site}${canonicalPath}`;
 const code = `S${pad(match.season)}E${pad(match.number)}`;
