@@ -4,8 +4,9 @@ import Base from '@/layouts/Base.astro';
 import Home from '@/components/Home';
 import { getFeatured } from '@/lib/featured';
 import { seriesPath } from '@/lib/slug';
+import type { ShowSummary } from '@/lib/types';
 
-let featured = [];
+let featured: ShowSummary[] = [];
 try {
   featured = await getFeatured();
 } catch {

@@ -15,7 +15,7 @@ interface Props {
 }
 const { currentId, genres = [], limit = 12 } = Astro.props;
 
-const rotate = (arr, by) => {
+const rotate = <T,>(arr: T[], by: number): T[] => {
   if (arr.length === 0) return arr;
   const k = (((by % arr.length) + arr.length) % arr.length);
   return arr.slice(k).concat(arr.slice(0, k));
