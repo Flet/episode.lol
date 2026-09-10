@@ -37,10 +37,12 @@ src/
 ## Local development
 
 ```bash
-npm install
+pnpm install
 cp .env.example .env     # then fill in TVDB_API_KEY
-npm run dev              # http://localhost:4321
+pnpm dev                 # http://localhost:4321
 ```
+
+Other scripts: `pnpm build` (production build), `pnpm preview`, `pnpm check` (Astro + TypeScript type check).
 
 ### Environment variables
 
@@ -53,7 +55,7 @@ npm run dev              # http://localhost:4321
 ## Deploy (Netlify)
 
 1. Connect this repo to your Netlify site.
-2. Build command `npm run build`, publish dir `dist` (already in `netlify.toml`).
+2. Build command `pnpm build`, publish dir `dist` (already in `netlify.toml`).
 3. Add `TVDB_API_KEY` (+ `TVDB_PIN`, `PUBLIC_GA4_ID`) under
    **Site settings → Environment variables**.
 
