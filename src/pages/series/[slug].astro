@@ -18,7 +18,7 @@ try {
   data = await getSeriesData(id);
 } catch (err) {
   const e = err as TvdbError;
-  if (e?.status === 404) return Astro.redirect('/', 404);
+  if (e?.status === 404) return new Response(null, { status: 404, headers: { Location: '/' } });
   // soft failure: fall through and let the client island retry against /api
 }
 
