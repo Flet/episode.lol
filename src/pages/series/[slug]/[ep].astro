@@ -19,7 +19,7 @@ try {
   data = await getSeriesData(id);
 } catch (err) {
   const e = err as TvdbError;
-  if (e?.status === 404) return Astro.redirect('/', 404);
+  if (e?.status === 404) return new Response(null, { status: 404, headers: { Location: '/' } });
 }
 
 // Without series data we can't resolve the episode — bounce to the series page,
