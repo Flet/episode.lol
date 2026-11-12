@@ -437,6 +437,22 @@ a.cast-card:hover .actor { color: var(--cyan); }
 .shout-cta { font-family: var(--font-osd); font-size: 18px; color: var(--amber); letter-spacing: .06em; margin-top: auto; }
 @media (max-width: 600px) { .shout-grid { grid-template-columns: 1fr; } }
 
+/* compact strip: the same shout-outs as one small row each, on series/episode pages */
+.shout-strip { margin-top: 28px; padding-top: 20px; border-top: 2px dashed rgba(255,179,71,.3); }
+.shout-strip-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin-top: 12px; }
+.shout-mini { display: flex; align-items: center; gap: 12px; background: #06100b; border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px; padding: 10px; color: var(--cream); box-shadow: inset 0 0 24px rgba(0,0,0,.5);
+  transition: transform .12s, border-color .12s, box-shadow .12s; }
+.shout-mini:hover { text-decoration: none; transform: translateY(-2px); border-color: var(--amber);
+  box-shadow: inset 0 0 24px rgba(0,0,0,.5), 0 0 14px rgba(255,150,60,.25); }
+.shout-mini-logo { flex: 0 0 96px; height: 68px; display: flex; align-items: center; justify-content: center;
+  background: #000; border-radius: 8px; padding: 5px; overflow: hidden; }
+.shout-mini-logo img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; border-radius: 3px; }
+.shout-mini-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.shout-mini-body b { font-size: 16px; color: var(--cream); }
+.shout-mini-blurb { font-size: 14px; line-height: 1.35; color: #f0dcb6; }
+.shout-mini .shout-cta { font-size: 17px; margin-top: 2px; }
+
 /* =========================================================================
    RESPONSIVE
    ========================================================================= */

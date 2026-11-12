@@ -1,0 +1,29 @@
+---
+// Compact shout-out strip for the bottom of series/episode pages: the same
+// projects as the big homepage cards, one small row each. Server-rendered,
+// no JS; logos are lazy-loaded since the strip sits below the fold.
+import { shoutHref, STRIP_SHOUTS, type ShoutPlacement } from '@/lib/shoutouts';
+
+interface Props {
+  placement: ShoutPlacement;
+}
+const { placement } = Astro.props;
+---
+
+<aside class="shout-strip" aria-label="Shout-outs">
+  <span class="eyebrow">Shout-Outs</span>
+  <div class="shout-strip-grid">
+    {STRIP_SHOUTS.map((s) => (
+      <a class="shout-mini" href={shoutHref(s.id, placement)} target="_blank" rel="noopener">
+        <span class="shout-mini-logo">
+          <img src={s.thumb} alt="" width={s.thumbWidth} height={s.thumbHeight} loading="lazy" decoding="async" />
+        </span>
+        <span class="shout-mini-body">
+          <b>{s.name}</b>
+          <span class="shout-mini-blurb">{s.blurb}</span>
+          <span class="shout-cta">▶ {s.domain}</span>
+        </span>
+      </a>
+    ))}
+  </div>
+</aside>
