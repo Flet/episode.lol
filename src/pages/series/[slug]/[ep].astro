@@ -4,6 +4,7 @@ import Base from '@/layouts/Base.astro';
 import ShowView from '@/components/ShowView';
 import EpisodeIndex from '@/components/EpisodeIndex.astro';
 import RelatedShows from '@/components/RelatedShows.astro';
+import ShoutStrip from '@/components/ShoutStrip.astro';
 import { getSeriesData } from '@/lib/series';
 import { episodeExtended, TvdbError } from '@/lib/tvdb';
 import { mapEpisodeDetail } from '@/lib/map';
@@ -93,5 +94,7 @@ const breadcrumb = breadcrumbLd([
     )}
 
     <RelatedShows currentId={detail.id} genres={detail.genres} />
+
+    <ShoutStrip placement="episode" />
   </article>
 </Base>

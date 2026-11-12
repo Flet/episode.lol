@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import type { ShowSummary } from '@/lib/types';
 import MiniTape from './MiniTape';
 import { seriesPath, episodePath } from '@/lib/slug';
+import { shoutHref } from '@/lib/shoutouts';
 import {
   addSearch,
   getPicks,
@@ -192,7 +193,7 @@ export default function Home() {
       <section className="shoutouts">
         <span className="eyebrow">Shout-Outs</span>
         <div className="shout-grid">
-          <a className="shout-card" href="https://www.munchmybenson.com/" target="_blank" rel="noreferrer">
+          <a className="shout-card" href={shoutHref('munch', 'home')} target="_blank" rel="noopener">
             <div className="shout-logo">
               <img src="/munch.webp" alt="Munch My Benson - a Law & Order: SVU podcast" loading="lazy" />
             </div>
@@ -202,7 +203,7 @@ export default function Home() {
             <span className="shout-cta">▶ munchmybenson.com</span>
           </a>
 
-          <a className="shout-card" href="https://unkindrewind.com/" target="_blank" rel="noreferrer">
+          <a className="shout-card" href={shoutHref('unkindrewind', 'home')} target="_blank" rel="noopener">
             <div className="shout-logo">
               <img src="/unkindrewind.jpg" alt="Unkind Rewind podcast" loading="lazy" />
             </div>
@@ -214,7 +215,7 @@ export default function Home() {
         </div>
 
         <div className="shout-solo">
-          <a className="shout-card" href="https://cinequote.net/" target="_blank" rel="noreferrer">
+          <a className="shout-card" href={shoutHref('cinequote', 'home')} target="_blank" rel="noopener">
             <div className="shout-logo">
               <img src="/cinequote.png" alt="CineQuote  guess the movie in five quotes or less" loading="lazy" />
             </div>

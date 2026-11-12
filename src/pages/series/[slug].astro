@@ -4,6 +4,7 @@ import Base from '@/layouts/Base.astro';
 import ShowView from '@/components/ShowView';
 import EpisodeIndex from '@/components/EpisodeIndex.astro';
 import RelatedShows from '@/components/RelatedShows.astro';
+import ShoutStrip from '@/components/ShoutStrip.astro';
 import { getSeriesData } from '@/lib/series';
 import { TvdbError } from '@/lib/tvdb';
 import { parseSeriesParam, seriesPath, episodePath } from '@/lib/slug';
@@ -96,6 +97,8 @@ const breadcrumb = detail
       )}
 
       <RelatedShows currentId={detail.id} genres={detail.genres} />
+
+      <ShoutStrip placement="series" />
     </article>
   ) : (
     <ShowView client:load seriesId={id} />
